@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Crate — sound-native search</title>
+  <style>
+    :root { --bg:#0d0d10; --panel:#16161c; --line:#2a2a33; --ink:#e8e8ea; --dim:#8a8a95; --acc:#e5b25d; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--ink);
+      font:15px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; }
+    header { padding:28px 20px 8px; text-align:center; }
+    header h1 { margin:0; font-size:30px; letter-spacing:-0.5px; }
+    header h1 span { color:var(--acc); }
+    header p { margin:6px 0 0; color:var(--dim); }
+    main { max-width:760px; margin:0 auto; padding:16px 20px 80px; }
+    .box { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; }
+    .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    input[type=text] { flex:1 1 260px; background:#0f0f14; border:1px solid var(--line);
+      color:var(--ink); border-radius:8px; padding:11px 13px; font:inherit; }
+    button { background:#20202a; color:var(--ink); border:1px solid var(--line);
+      border-radius:8px; padding:10px 14px; font:inherit; cursor:pointer; }
+    button:hover { border-color:var(--acc); }
+    button.primary { background:var(--acc); color:#161006; border-color:var(--acc); font-weight:600; }
+    button.rec { color:#ff6b6b; }
+    #drop { margin-top:12px; border:1.5px dashed var(--line); border-radius:10px; padding:22px;
+      text-align:center; color:var(--dim); transition:.15s; }
+    #drop.hot { border-color:var(--acc); color:var(--ink); background:#14140f; }
+    .hint { color:var(--dim); font-size:13px; margin:4px 2px 0; }
+    .results { margin-top:20px; display:flex; flex-direction:column; gap:8px; }
+    .result { display:flex; align-items:center; gap:12px; background:var(--panel);
+      border:1px solid var(--line); border-radius:10px; padding:10px 12px; }
+    .result .meta { flex:1; min-width:0; }
+    .result .t { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .result .sub { color:var(--dim); font-size:12px; }
+    .score { color:var(--acc); font-variant-numeric:tabular-nums; }
+    .kit-role { margin-top:18px; color:var(--acc); text-transform:uppercase; font-size:12px; letter-spacing:1px; }
+    .iconbtn { padding:6px 9px; }
+    #status { color:var(--dim); min-height:20px; margin-top:10px; }
+    .dash { display:flex; gap:16px; margin-top:26px; color:var(--dim); font-size:13px; flex-wrap:wrap; }
+    .dash b { color:var(--ink); }
+    a { color:var(--acc); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🎚️ <span>Crate</span></h1>
+    <p>hum it · drop a track · describe it — search sound, not words</p>
+  </header>
+  <main>
+    <div class="box">
+      <div class="row">
+        <input id="q" type="text" placeholder="dusty boom-bap break but darker" />
+        <button class="primary" id="go">Search</button>
+        <button id="mic">● Rec hum</button>
+      </div>
+      <div id="drop">drop a sample or reference track here
+        <div class="hint">audio file → search by sound, or “Build a crate” to split into stems</div>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button id="buildCrate" disabled>Build a crate from dropped track</button>
+      </div>
+      <div id="status"></div>
+    </div>
+
+    <div class="results" id="results"></div>
+
+    <div class="dash" id="dash">
+      <span>encoder latency —</span>
+      <span>base: <b id="lat-base">—</b> ms</span>
+      <span>int8: <b id="lat-int8">—</b> ms</span>
+      <span>speedup: <b id="lat-speed">—</b>×</span>
+    </div>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>
