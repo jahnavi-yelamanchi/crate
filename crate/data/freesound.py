@@ -18,17 +18,17 @@ from crate import config
 
 API = "https://freesound.org/apiv2"
 
-# Freesound license strings we accept (licensing-clean, redistributable).
+# Freesound returns `license` as a URL, e.g. http://creativecommons.org/licenses/by/4.0/
+# Accept CC0 and CC-BY only (redistributable, ML-usable). `licenses/by/` excludes
+# by-nc / by-nd / by-sa because those have a hyphen, not a slash, after "by".
 CLEAN_LICENSES = (
-    "Creative Commons 0",
-    "Attribution",
-    "Attribution 4.0",
-    "Attribution 3.0",
+    "creativecommons.org/publicdomain/zero",  # CC0
+    "creativecommons.org/licenses/by/",       # CC-BY (any version)
 )
 
 
 def _clean(license_str: str) -> bool:
-    return any(license_str.startswith(ok) for ok in CLEAN_LICENSES)
+    return any(tok in license_str for tok in CLEAN_LICENSES)
 
 
 def _get(url: str, params: dict, retries: int = 5) -> dict:

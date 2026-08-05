@@ -1,4 +1,4 @@
-"""Freesound client — retry/backoff on 429 without real network."""
+"""Freesound client — license URL filter + retry/backoff on 429, no real network."""
 
 import time
 
@@ -17,6 +17,19 @@ class _Resp:
     def raise_for_status(self):
         if self.status_code >= 400:
             raise fs.requests.HTTPError(f"{self.status_code}")
+
+
+def test_clean_accepts_cc0_and_by_urls():
+    assert fs._clean("https://creativecommons.org/publicdomain/zero/1.0/")
+    assert fs._clean("http://creativecommons.org/licenses/by/4.0/")
+    assert fs._clean("http://creativecommons.org/licenses/by/3.0/")
+
+
+def test_clean_rejects_restrictive_urls():
+    assert not fs._clean("http://creativecommons.org/licenses/by-nc/4.0/")
+    assert not fs._clean("http://creativecommons.org/licenses/by-nd/3.0/")
+    assert not fs._clean("http://creativecommons.org/licenses/by-sa/3.0/")
+    assert not fs._clean("")
 
 
 def test_get_backs_off_then_succeeds(monkeypatch):
