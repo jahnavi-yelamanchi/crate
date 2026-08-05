@@ -48,7 +48,7 @@ class Retriever:
         # over-fetch when deduping so we still return k after dropping near-dupes
         fetch = k * 4 if dedup else k
         scores, idx = self.index.search(q.reshape(1, -1).astype(np.float32), fetch)
-        vecs = self.index.reconstruct_batch(idx[0]) if dedup else None
+        vecs = self.index.reconstruct_batch(idx[0])  # for dedup + taste rerank
 
         results, kept_vecs = [], []
         for rank, (i, s) in enumerate(zip(idx[0], scores[0])):
@@ -60,13 +60,13 @@ class Retriever:
             results.append({
                 "id": self.ids[i],
                 "score": float(s),
+                "emb": vecs[rank],  # kept internal; app strips before JSON
                 "text": rec.get("text", ""),
                 "path": rec.get("path", ""),
                 "attribution": rec.get("attribution", ""),
                 "license": rec.get("license", ""),
             })
-            if dedup:
-                kept_vecs.append(vecs[rank])
+            kept_vecs.append(vecs[rank])
             if len(results) >= k:
                 break
         return results
