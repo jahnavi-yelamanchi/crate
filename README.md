@@ -52,9 +52,36 @@ python crate/index/build_index.py
 uvicorn crate.app.main:app --reload   # open http://localhost:8000
 ```
 
+## Eval
+
+```bash
+python eval/recall_at_k.py     # fine-tuned vs base CLAP, held-out producer vocab
+python eval/parity.py          # text-query vs audio-query top-k overlap
+python eval/ab_taste.py        # taste-ranked vs similarity-only (AUC)
+python eval/failure_tests.py   # bad hums, genre drift, dup flooding
+```
+
+Each writes a JSON under `eval/`; `scripts/publish_hf.py` folds `recall.json` into
+the model card.
+
+## Project layout
+
+| dir | what |
+|---|---|
+| `crate/data/` | Freesound + pack ingest, preprocess, augment, pairs |
+| `crate/model/` | CLAP encoder wrapper, LoRA fine-tune, int8 quantize |
+| `crate/index/` | FAISS build + query router / ANN / dedup |
+| `crate/rank/` | taste reco head + distilled re-ranker |
+| `crate/agent/` | router → stems → per-stem retrieval → kit assembler |
+| `crate/app/` | FastAPI + single-page mic/drop/text UI |
+| `notebooks/` | Colab: train LoRA, build index |
+| `spaces/` | HF Docker Space deploy |
+| `eval/` | recall, parity, taste A/B, failure tests |
+
 ## Status
 
-Built phase by phase — see [the plan](#) and commit history. Results table (fine-tuned vs base CLAP on producer vocab) lands with Phase 8.
+Built phase by phase — see commit history. Landing page: `docs/` (GitHub Pages).
+Results table (fine-tuned vs base CLAP on producer vocab) lands after training.
 
 ## License
 
