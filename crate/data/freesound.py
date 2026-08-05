@@ -31,8 +31,28 @@ def _clean(license_str: str) -> bool:
     return any(license_str.startswith(ok) for ok in CLEAN_LICENSES)
 
 
-def search(query: str, page_size: int = 50, max_results: int = 200) -> list[dict]:
-    """Search Freesound, filtered to clean licenses. Returns raw sound dicts."""
+def _get(url: str, params: dict, retries: int = 5) -> dict:
+    """GET with backoff on 429/5xx. Freesound free tier is ~60 req/min."""
+    for attempt in range(retries):
+        r = requests.get(url, params=params, timeout=30)
+        if r.status_code == 429 or r.status_code >= 500:
+            wait = float(r.headers.get("Retry-After", 2 ** attempt))
+            print(f"  rate-limited ({r.status_code}), backing off {wait:.0f}s")
+            time.sleep(wait)
+            continue
+        r.raise_for_status()
+        return r.json()
+    r.raise_for_status()  # out of retries → surface the last error
+    return {}
+
+
+def search(query: str, page_size: int = 50, max_results: int = 200,
+           max_pages: int = 4) -> list[dict]:
+    """Search Freesound, filtered to clean licenses. Returns raw sound dicts.
+
+    Caps pages so a query where most results fail the license filter can't page
+    dozens deep and burn the rate limit.
+    """
     if not config.FREESOUND_KEY:
         raise RuntimeError("FREESOUND_KEY missing — add it to .env (see .env.example)")
     out: list[dict] = []
@@ -44,16 +64,16 @@ def search(query: str, page_size: int = 50, max_results: int = 200) -> list[dict
         "fields": "id,name,tags,license,previews,username,duration",
         "filter": "duration:[0.5 TO 30]",
     }
-    while url and len(out) < max_results:
-        r = requests.get(url, params=params, timeout=30)
-        r.raise_for_status()
-        data = r.json()
+    pages = 0
+    while url and len(out) < max_results and pages < max_pages:
+        data = _get(url, params)
         for s in data.get("results", []):
             if _clean(s.get("license", "")):
                 out.append(s)
         url = data.get("next")
         params = {"token": config.FREESOUND_KEY}  # `next` already carries query params
-        time.sleep(0.2)  # ponytail: be polite to the API, not a rate-limit lib
+        pages += 1
+        time.sleep(1.0)  # stay under ~60 req/min
     return out[:max_results]
 
 
@@ -78,10 +98,19 @@ def ingest(queries: list[str], per_query: int = 100) -> int:
     written = 0
     with open(config.META_PATH, "a") as meta:
         for q in queries:
-            for s in search(q, max_results=per_query):
+            try:
+                hits = search(q, max_results=per_query)
+            except requests.HTTPError as e:
+                print(f"  skip query '{q}': {e}")
+                continue
+            for s in hits:
                 if s["id"] in seen:
                     continue
-                path = download_preview(s, config.RAW_DIR)
+                try:
+                    path = download_preview(s, config.RAW_DIR)
+                except requests.HTTPError as e:
+                    print(f"  skip download {s['id']}: {e}")
+                    continue
                 if path is None:
                     continue
                 text = _caption(s, q)
