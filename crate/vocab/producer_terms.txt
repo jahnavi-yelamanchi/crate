@@ -1,0 +1,59 @@
+# Producer vocabulary — words CLAP barely knows. Used to build text prompts for
+# contrastive pairs and to probe fine-tune quality. One term per line; blank
+# lines and # comments ignored.
+
+# --- Drums / breaks ---
+boom-bap
+dusty break
+tape-saturated drums
+rimshot
+crispy hats
+sloppy swing
+lo-fi kick
+punchy snare
+trap hats
+breakbeat
+amen break
+vinyl crackle drums
+gated reverb snare
+808 kick
+
+# --- Bass ---
+sub bass
+reese bass
+wobble bass
+upright bass
+moog bass
+sine bass
+distorted 808
+plucky bass
+
+# --- Texture / tone ---
+warm analog pad
+cold digital pad
+tape hiss
+vinyl crackle
+field recording
+granular texture
+detuned rhodes
+dusty vinyl loop
+underwater filter
+bit-crushed
+saturated
+lush reverb
+dry and close
+airy
+
+# --- Genre / mood shorthand ---
+jazzy chords
+soulful sample
+dark ambient
+ethereal
+gritty
+hazy
+nostalgic
+cinematic
+minimal techno stab
+house piano
+drill slide
+phonk cowbell
