@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.env
+
+# Data & model artifacts (large, not versioned)
+data/
+models/
+*.faiss
+*.npy
+*.onnx
+*.wav
+*.mp3
+*.flac
+!crate/app/static/*.wav
+
+# Notebooks
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Eval outputs
+eval/*.json
+!eval/.gitkeep
+
+# Session / taste state
+sessions/
