@@ -9,9 +9,10 @@ dist/
 venv/
 .env
 
-# Data & model artifacts (large, not versioned)
-data/
-models/
+# Data & model artifacts (large, not versioned) — anchored to repo root so the
+# `crate/data/` source package is NOT ignored.
+/data/
+/models/
 *.faiss
 *.npy
 *.onnx
@@ -33,4 +34,4 @@ eval/*.json
 !eval/.gitkeep
 
 # Session / taste state
-sessions/
+/sessions/
