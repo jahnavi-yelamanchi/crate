@@ -2,7 +2,15 @@
 
 import numpy as np
 
+from eval.parity import jaccard
 from eval.recall_at_k import recall_at_k
+
+
+def test_jaccard():
+    assert jaccard({1, 2, 3}, {1, 2, 3}) == 1.0
+    assert jaccard({1, 2}, {3, 4}) == 0.0
+    assert jaccard({1, 2}, {2, 3}) == 1 / 3
+    assert jaccard(set(), set()) == 0.0
 
 
 def test_recall_perfect_when_text_equals_audio():
