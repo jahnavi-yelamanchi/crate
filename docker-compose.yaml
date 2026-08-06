@@ -1,0 +1,21 @@
+# Run Crate locally:  docker compose up --build   →   http://localhost:8000
+#
+# Prereqs (once): a built corpus + index on disk, i.e. ./data and ./models
+# populated by the pipeline (see README "Quickstart"). The fine-tuned adapter
+# is pulled from the Hub at runtime using HF_MODEL_REPO in your .env.
+services:
+  crate:
+    build: .
+    image: crate:latest
+    ports:
+      - "8000:8000"
+    env_file: .env            # HF_MODEL_REPO (required), HF_TOKEN (only if private)
+    volumes:
+      - ./data:/app/data      # corpus audio + metadata.jsonl
+      - ./models:/app/models  # index.faiss + ids.json (+ local adapter, optional)
+      - ./sessions:/app/sessions
+      - hfcache:/app/.hfcache # cached CLAP weights + adapter
+    restart: unless-stopped
+
+volumes:
+  hfcache:

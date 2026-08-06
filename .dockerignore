@@ -1,0 +1,15 @@
+# keep the build context small — data/models are mounted at runtime, not baked in
+.git
+data/
+models/
+sessions/
+notebooks/
+docs/
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.onnx
+*.faiss
+.env
+hf-space/
