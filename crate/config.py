@@ -39,7 +39,7 @@ CLIP_SAMPLES = int(SAMPLE_RATE * CLIP_SECONDS)
 EMBED_DIM = 512          # CLAP projection dim
 
 # --- Retrieval / ranking ---
-TOP_K = 20
+TOP_K = 8          # results per query — kept tight so the crate stays curated
 DEDUP_COSINE = 0.98      # near-duplicate flood guard: drop results this similar to a kept one
 TASTE_ALPHA = 0.7        # weight on similarity
 TASTE_BETA = 0.3         # weight on personal taste score

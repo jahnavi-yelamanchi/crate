@@ -14,63 +14,76 @@
       --paper:var(--parchment); --ink:var(--onyx); --card:var(--linen); --muted:var(--walnut);
       --bd:2.5px solid var(--ink); --hair:1px solid var(--stone); --sh:5px 5px 0 var(--ink);
       --serif:"Cormorant Garamond",Georgia,serif; --sans:"Inter",system-ui,sans-serif;
-      --ease:cubic-bezier(.25,.46,.45,.94);
+      --ease:cubic-bezier(.25,.46,.45,.94); --wave:var(--onyx);
     }
     @media (prefers-color-scheme:dark){
       :root{ --paper:var(--midnight); --ink:var(--parchment); --card:#33302b;
-             --muted:var(--stone); --sh:5px 5px 0 #000; --hair:1px solid #4a4640; }
+             --muted:var(--stone); --sh:5px 5px 0 #000; --hair:1px solid #4a4640; --wave:var(--saffron); }
     }
     *{ box-sizing:border-box; }
     html{ scroll-behavior:smooth; }
     body{ margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans);
-      font-weight:500; font-size:15px; line-height:1.4; letter-spacing:-.01em;
-      overflow-x:hidden; }
-    .wrap{ max-width:1180px; margin:0 auto; padding:26px 22px 90px; }
+      font-weight:500; font-size:15px; line-height:1.4; letter-spacing:-.01em; overflow-x:hidden; }
+
+    /* animated sound-wave background */
+    .wavebg{ position:fixed; inset:0; z-index:-1; display:flex; align-items:center;
+      gap:5px; padding:0 8px; opacity:.10; pointer-events:none; }
+    .wavebg span{ flex:1; height:100%; background:var(--wave); transform:scaleY(.1);
+      transform-origin:center; animation:eq 1.4s var(--ease) infinite; }
+    @keyframes eq{ 0%,100%{ transform:scaleY(.06);} 50%{ transform:scaleY(1);} }
+
+    .wrap{ max-width:1160px; margin:0 auto; padding:0 22px 90px; }
+
+    /* ---------- nav ---------- */
+    nav{ display:flex; align-items:center; justify-content:space-between; padding:20px 0 8px; }
+    nav .logo{ font-weight:700; font-size:15px; text-transform:uppercase; letter-spacing:.12em; }
+    nav .logo b{ color:var(--saffron); }
+    nav .links{ display:flex; gap:22px; align-items:center; }
+    nav a{ font-size:12px; font-weight:500; text-transform:uppercase; letter-spacing:.1em;
+      color:var(--ink); text-decoration:none; transition:color .15s; }
+    nav a:hover{ color:var(--saffron); }
+    nav a .ext{ font-size:.85em; opacity:.6; }
 
     /* ---------- hero ---------- */
-    .hero{ display:grid; grid-template-columns:1fr auto; gap:28px; align-items:center;
-      padding:22px 0 8px; }
-    .brand{ font-family:var(--sans); font-weight:700; font-size:clamp(3.2rem,11vw,7rem);
-      line-height:.82; letter-spacing:-.05em; text-transform:uppercase; margin:0;
-      animation:rise .7s var(--ease) both; }
+    .hero{ display:grid; grid-template-columns:1.1fr auto; gap:36px; align-items:center;
+      padding:18px 0 26px; }
+    .brand{ font-weight:700; font-size:clamp(3.6rem,12vw,7.5rem); line-height:.8;
+      letter-spacing:-.055em; text-transform:uppercase; margin:0; animation:rise .7s var(--ease) both; }
     .brand .u{ display:inline-block; background:var(--saffron); color:var(--midnight);
-      padding:0 .12em; border:var(--bd); box-shadow:var(--sh); }
+      padding:0 .1em; border:var(--bd); box-shadow:var(--sh); }
     .tagline{ font-family:var(--serif); font-weight:300; font-style:italic;
-      font-size:clamp(1.3rem,3.4vw,2rem); color:var(--espresso); margin:18px 2px 0;
-      line-height:1.15; max-width:34ch; animation:rise .7s .1s var(--ease) both; }
+      font-size:clamp(1.35rem,3.6vw,2.1rem); color:var(--espresso); margin:16px 2px 0;
+      line-height:1.12; max-width:32ch; animation:rise .7s .1s var(--ease) both; }
     @media (prefers-color-scheme:dark){ .tagline{ color:var(--stone); } }
 
-    /* spinning vinyl */
-    .vinyl{ width:clamp(120px,20vw,190px); height:clamp(120px,20vw,190px); flex:none;
-      animation:spin 8s linear infinite; }
-    body.busy .vinyl{ animation-duration:.7s; }
-    .vinyl .grooves circle{ fill:none; stroke:var(--onyx); stroke-opacity:.35; }
-    @media (prefers-color-scheme:dark){ .vinyl .grooves circle{ stroke:var(--stone); stroke-opacity:.4; } }
+    /* turntable */
+    .deck{ position:relative; width:clamp(150px,22vw,220px); height:clamp(150px,22vw,220px);
+      flex:none; animation:rise .7s .15s var(--ease) both; }
+    .disc{ width:100%; height:100%; animation:spin 6s linear infinite; }
+    body.busy .disc{ animation-duration:.55s; }
+    .disc .ring{ fill:none; stroke:var(--parchment); stroke-opacity:.55; }
+    .arm{ position:absolute; top:6%; right:4%; width:46%; height:auto; transform-origin:top right;
+      transform:rotate(0deg); }
+    .arm line{ stroke:var(--ink); stroke-width:5; stroke-linecap:round; }
+    .arm circle{ fill:var(--ink); }
 
-    /* ---------- marquee ---------- */
-    .marquee{ margin:26px 0; border-top:var(--bd); border-bottom:var(--bd); overflow:hidden;
-      white-space:nowrap; }
-    .marquee .track{ display:inline-block; padding:10px 0; animation:scroll 26s linear infinite;
-      font-family:var(--serif); font-weight:400; font-size:1.35rem; text-transform:uppercase;
-      letter-spacing:.02em; }
-    .marquee .track span{ padding:0 26px; color:var(--espresso); }
+    .marquee{ margin:8px 0 30px; border-top:var(--bd); border-bottom:var(--bd); overflow:hidden; white-space:nowrap; }
+    .marquee .track{ display:inline-block; padding:9px 0; animation:scroll 24s linear infinite;
+      font-family:var(--serif); font-weight:400; font-size:1.3rem; text-transform:uppercase; letter-spacing:.02em; }
+    .marquee .track span{ padding:0 24px; color:var(--espresso); }
     .marquee .track .dot{ color:var(--saffron); }
     @media (prefers-color-scheme:dark){ .marquee .track span{ color:var(--stone); } }
 
-    /* ---------- section label ---------- */
-    .eyebrow{ font-size:12px; font-weight:500; text-transform:uppercase; letter-spacing:.14em;
-      color:var(--muted); margin:0 0 14px; }
+    .eyebrow{ font-size:12px; font-weight:500; text-transform:uppercase; letter-spacing:.14em; color:var(--muted); margin:0 0 13px; }
 
-    /* ---------- chips ---------- */
     .chips{ display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
     .chip{ font-size:12px; font-weight:500; text-transform:uppercase; letter-spacing:.1em;
       border:var(--bd); padding:10px 14px; background:var(--card); color:var(--ink);
       display:flex; gap:8px; align-items:center; cursor:pointer;
-      transition:transform .18s var(--ease), box-shadow .18s var(--ease); }
+      transition:transform .18s var(--ease), box-shadow .18s var(--ease), background .18s; }
     .chip:hover{ transform:translate(-2px,-2px) rotate(-1deg); box-shadow:var(--sh); background:var(--saffron); color:var(--midnight); }
     .chip:active{ transform:translate(1px,1px); }
 
-    /* ---------- search card ---------- */
     .card{ background:var(--card); border:var(--bd); box-shadow:var(--sh); padding:24px; }
     .row{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
     input[type=text]{ flex:1 1 260px; background:var(--paper); border:var(--bd); border-radius:3px;
@@ -79,9 +92,8 @@
     input::placeholder{ color:var(--walnut); }
 
     button{ border:var(--bd); border-radius:3px; background:var(--paper); color:var(--ink);
-      font-family:var(--sans); font-weight:700; font-size:12px; text-transform:uppercase;
-      letter-spacing:.08em; padding:14px 18px; cursor:pointer; box-shadow:var(--sh);
-      display:inline-flex; gap:8px; align-items:center;
+      font-family:var(--sans); font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:.08em;
+      padding:14px 18px; cursor:pointer; box-shadow:var(--sh); display:inline-flex; gap:8px; align-items:center;
       transition:transform .15s var(--ease), box-shadow .15s var(--ease), background .15s; }
     button:hover{ transform:translate(-2px,-2px); box-shadow:7px 7px 0 var(--ink); }
     button:active{ transform:translate(2px,2px); box-shadow:2px 2px 0 var(--ink); }
@@ -108,8 +120,7 @@
     #status{ margin-top:16px; font-size:13px; font-weight:500; color:var(--espresso); min-height:20px; }
     @media (prefers-color-scheme:dark){ #status{ color:var(--stone); } }
 
-    /* ---------- results ---------- */
-    .results{ margin-top:34px; display:flex; flex-direction:column; gap:16px; }
+    .results{ margin-top:32px; display:flex; flex-direction:column; gap:16px; }
     .rolehdr{ font-family:var(--serif); font-weight:300; font-size:2.4rem; text-transform:uppercase;
       letter-spacing:-.03em; line-height:.9; margin-top:14px; padding-bottom:8px; border-bottom:var(--hair); }
     .rolehdr::first-letter{ color:var(--saffron); }
@@ -133,45 +144,85 @@
     .result.saved{ background:color-mix(in srgb, var(--saffron) 25%, var(--card)); }
     .result.skipped{ opacity:.38; }
 
-    /* ---------- latency ---------- */
     .dash{ margin-top:40px; }
     .dash .card{ display:flex; gap:26px; flex-wrap:wrap; align-items:baseline; }
     .dash .lbl{ font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); }
     .dash b{ font-family:var(--serif); font-weight:500; font-size:1.5rem; color:var(--saffron); }
 
+    /* ---------- model card ---------- */
+    .modelcard{ margin-top:72px; padding-top:36px; border-top:var(--bd); }
+    .modelcard h2{ font-family:var(--serif); font-weight:300; font-size:clamp(2.6rem,7vw,4.4rem);
+      text-transform:uppercase; letter-spacing:-.04em; line-height:.85; margin:0 0 8px; }
+    .modelcard h2 .u{ color:var(--saffron); }
+    .modelcard .lede{ font-family:var(--serif); font-style:italic; font-weight:400;
+      font-size:1.4rem; color:var(--espresso); max-width:60ch; margin:0 0 30px; }
+    @media (prefers-color-scheme:dark){ .modelcard .lede{ color:var(--stone); } }
+    .mc-grid{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+    .mc-grid .card h3{ font-size:12px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); margin:0 0 12px; }
+    .flow{ font-family:var(--serif); font-size:1.15rem; line-height:1.7; }
+    .flow b{ color:var(--saffron); font-weight:500; }
+    table.mc{ width:100%; border-collapse:collapse; font-size:14px; }
+    table.mc th, table.mc td{ border:var(--hair); padding:9px 11px; text-align:left; }
+    table.mc th{ font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:500; }
+    table.mc td.n{ font-family:var(--serif); font-size:1.2rem; }
+    table.mc td.ft{ color:var(--saffron); font-weight:500; }
+    .stack{ display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
+    .stack span{ font-size:11px; text-transform:uppercase; letter-spacing:.06em; border:var(--hair); padding:5px 9px; }
+    .mc-links{ display:flex; gap:14px; flex-wrap:wrap; margin-top:26px; }
+    .mc-links a{ text-decoration:none; }
+
     svg.i{ width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
     a{ color:var(--saffron); font-weight:700; }
+    footer{ margin-top:44px; font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); }
 
-    /* ---------- keyframes ---------- */
     @keyframes spin{ to{ transform:rotate(360deg); } }
     @keyframes scroll{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
     @keyframes rise{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:none; } }
     @keyframes pulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.05); box-shadow:7px 7px 0 var(--ink); } }
     @media (prefers-reduced-motion:reduce){ *{ animation:none!important; transition:none!important; } }
 
-    @media (max-width:640px){
-      .hero{ grid-template-columns:1fr; } .vinyl{ display:none; }
+    @media (max-width:720px){
+      .hero{ grid-template-columns:1fr; } .deck{ display:none; }
+      .mc-grid{ grid-template-columns:1fr; }
+      nav .links{ gap:14px; } nav a{ font-size:11px; }
       .result{ grid-template-columns:60px 1fr; } .fb{ grid-column:1/-1; flex-direction:row; }
     }
   </style>
 </head>
 <body>
+  <div class="wavebg" id="wavebg" aria-hidden="true"></div>
   <div class="wrap">
+    <nav>
+      <div class="logo">Cr<b>a</b>te</div>
+      <div class="links">
+        <a href="#model-card">Model card</a>
+        <a href="https://huggingface.co/jahnaviym/crate-clap-lora" target="_blank" rel="noopener">HF model <span class="ext">↗</span></a>
+        <a href="https://github.com/jahnavi-yelamanchi/crate" target="_blank" rel="noopener">GitHub <span class="ext">↗</span></a>
+      </div>
+    </nav>
+
     <div class="hero">
       <div>
         <h1 class="brand">Cr<span class="u">a</span>te</h1>
         <p class="tagline">Search the sound, not the word. Hum it, drop a track, or describe it.</p>
       </div>
-      <svg class="vinyl" viewBox="0 0 200 200" aria-hidden="true">
-        <circle cx="100" cy="100" r="98" fill="#2c2c2c"/>
-        <g class="grooves">
-          <circle cx="100" cy="100" r="86"/><circle cx="100" cy="100" r="74"/>
-          <circle cx="100" cy="100" r="62"/><circle cx="100" cy="100" r="50"/>
-        </g>
-        <circle cx="100" cy="100" r="34" fill="#d49653"/>
-        <circle cx="100" cy="100" r="7" fill="#2c2c2c"/>
-        <circle cx="100" cy="100" r="2.5" fill="#d8cbb8"/>
-      </svg>
+      <div class="deck">
+        <svg class="disc" viewBox="0 0 200 200" aria-hidden="true">
+          <circle cx="100" cy="100" r="99" fill="#1c1a17"/>
+          <g class="ring">
+            <circle cx="100" cy="100" r="90"/><circle cx="100" cy="100" r="80"/>
+            <circle cx="100" cy="100" r="70"/><circle cx="100" cy="100" r="60"/>
+            <circle cx="100" cy="100" r="50"/>
+          </g>
+          <circle cx="100" cy="100" r="36" fill="#d49653"/>
+          <circle cx="100" cy="100" r="36" fill="none" stroke="#1c1a17" stroke-width="1.5"/>
+          <circle cx="100" cy="100" r="6" fill="#1c1a17"/>
+        </svg>
+        <svg class="arm" viewBox="0 0 100 100" aria-hidden="true">
+          <line x1="92" y1="8" x2="40" y2="70"/>
+          <circle cx="92" cy="8" r="7"/><circle cx="40" cy="70" r="4"/>
+        </svg>
+      </div>
     </div>
 
     <div class="marquee" aria-hidden="true">
@@ -232,6 +283,52 @@
         <span class="lbl">speedup <b id="lat-speed">—</b>×</span>
       </div>
     </div>
+
+    <!-- ---------- model card ---------- -->
+    <section class="modelcard" id="model-card">
+      <h2>The <span class="u">build</span></h2>
+      <p class="lede">Producers search sound with words, and audio metadata is garbage. Crate makes the
+        query native to audio — hum, reference track, or text, all into one contrastive space.</p>
+
+      <div class="mc-grid">
+        <div class="card">
+          <h3>Pipeline</h3>
+          <div class="flow">
+            query <b>(hum · track · text)</b><br>
+            → router → <b>CLAP encoder</b> (LoRA, producer vocab)<br>
+            → one embedding space → <b>FAISS</b> ANN<br>
+            → <b>taste re-ranker</b> (your saves / skips, live)<br>
+            → <b>stem decomposer</b> (Demucs) → per-stem crate
+          </div>
+        </div>
+        <div class="card">
+          <h3>Result — fine-tuned vs base CLAP</h3>
+          <table class="mc">
+            <tr><th>metric</th><th>base</th><th>fine-tuned</th></tr>
+            <tr><td>recall@1</td><td class="n">0.21</td><td class="n ft">0.40</td></tr>
+            <tr><td>recall@5</td><td class="n">0.58</td><td class="n ft">0.87</td></tr>
+            <tr><td>recall@10</td><td class="n">0.75</td><td class="n ft">0.95</td></tr>
+          </table>
+          <p class="hint" style="margin-top:12px;color:var(--muted)">Held-out producer-vocab retrieval. LoRA on the attention layers, 12 epochs.</p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:20px">
+        <h3>Stack</h3>
+        <div class="stack">
+          <span>CLAP + PEFT LoRA</span><span>Demucs stems</span><span>FAISS</span>
+          <span>ONNX int8</span><span>FastAPI</span><span>Freesound (CC0/CC-BY)</span>
+          <span>contrastive InfoNCE</span><span>taste reco head</span>
+        </div>
+      </div>
+
+      <div class="mc-links">
+        <a href="https://huggingface.co/jahnaviym/crate-clap-lora" target="_blank" rel="noopener"><button class="accent">HF model ↗</button></a>
+        <a href="https://github.com/jahnavi-yelamanchi/crate" target="_blank" rel="noopener"><button>GitHub repo ↗</button></a>
+      </div>
+
+      <footer>Crate · sound-native search for producers · MIT · data is licensing-clean</footer>
+    </section>
   </div>
   <script src="/static/app.js"></script>
 </body>

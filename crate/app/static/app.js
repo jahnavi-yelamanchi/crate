@@ -185,6 +185,19 @@ window.addEventListener("load", () => {
   Promise.resolve(searchText()).catch(() => setStatus(""));
 });
 
+// --- animated sound-wave background ---
+(function buildWave() {
+  const el = $("wavebg");
+  if (!el) return;
+  const n = Math.min(72, Math.max(20, Math.floor(window.innerWidth / 20)));
+  for (let i = 0; i < n; i++) {
+    const s = document.createElement("span");
+    s.style.animationDelay = (-Math.random() * 1.4).toFixed(2) + "s";
+    s.style.animationDuration = (1.0 + Math.random() * 1.3).toFixed(2) + "s";
+    el.appendChild(s);
+  }
+})();
+
 // --- latency dashboard (only shown when real numbers exist) ---
 fetch("/latency").then((r) => r.json()).then((d) => {
   if (!d || !d.base_torch_cpu_ms) return;
