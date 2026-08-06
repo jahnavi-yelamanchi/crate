@@ -36,7 +36,12 @@ def export_and_quantize(adapter: str | None = None) -> str:
             self.model = model
 
         def forward(self, input_features):
-            return self.model.get_audio_features(input_features=input_features)
+            out = self.model.get_audio_features(input_features=input_features)
+            if not torch.is_tensor(out):  # some versions return the raw tower output
+                out = out.pooler_output
+            if out.shape[-1] != config.EMBED_DIM:
+                out = self.model.audio_projection(out)
+            return out
 
     tower = AudioTower(enc.model).eval()
     config.MODELS_DIR.mkdir(parents=True, exist_ok=True)

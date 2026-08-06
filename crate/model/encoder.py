@@ -37,6 +37,21 @@ class ClapEncoder:
 
         return torch.nn.functional.normalize(x, dim=-1)
 
+    def _project(self, out, projection):
+        """Return the EMBED_DIM projected vector regardless of what the CLAP helper
+        gave back. Some transformers versions return the raw tower ModelOutput from
+        get_*_features instead of the projected tensor — pool it and project here.
+        """
+        import torch
+
+        if not torch.is_tensor(out):
+            out = getattr(out, "pooler_output", None)
+            if out is None:
+                raise RuntimeError("CLAP feature call returned no pooler_output")
+        if out.shape[-1] != config.EMBED_DIM:
+            out = projection(out)
+        return out
+
     def embed_audio(self, wav: np.ndarray | list[np.ndarray]) -> np.ndarray:
         """One clip or a batch → (n, EMBED_DIM) L2-normalized."""
         import torch
@@ -45,7 +60,8 @@ class ClapEncoder:
         inputs = self.processor(audio=batch, sampling_rate=config.SAMPLE_RATE,
                                 return_tensors="pt").to(self.device)
         with torch.no_grad():
-            feats = self.model.get_audio_features(**inputs)
+            feats = self._project(self.model.get_audio_features(**inputs),
+                                  self.model.audio_projection)
         return self._norm(feats).cpu().numpy().astype(np.float32)
 
     def embed_text(self, text: str | list[str]) -> np.ndarray:
@@ -55,7 +71,8 @@ class ClapEncoder:
         batch = [text] if isinstance(text, str) else text
         inputs = self.processor(text=batch, return_tensors="pt", padding=True).to(self.device)
         with torch.no_grad():
-            feats = self.model.get_text_features(**inputs)
+            feats = self._project(self.model.get_text_features(**inputs),
+                                  self.model.text_projection)
         return self._norm(feats).cpu().numpy().astype(np.float32)
 
 
