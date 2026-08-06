@@ -76,7 +76,6 @@ def train(
     if not train_rows:
         raise RuntimeError("empty train split — run the data pipeline first")
     opt = torch.optim.AdamW((p for p in model.parameters() if p.requires_grad), lr=lr)
-    scale = torch.nn.Parameter(torch.tensor(np.log(1 / 0.07), device=device))
 
     for epoch in range(epochs):
         total, steps = 0.0, 0
@@ -87,12 +86,9 @@ def train(
                                  return_tensors="pt").to(device)
             text_in = processor(text=texts, return_tensors="pt", padding=True).to(device)
 
-            a = torch.nn.functional.normalize(model.get_audio_features(**audio_in), dim=-1)
-            t = torch.nn.functional.normalize(model.get_text_features(**text_in), dim=-1)
-            logits = scale.exp() * a @ t.t()
-            labels = torch.arange(len(wavs), device=device)
-            loss = 0.5 * (torch.nn.functional.cross_entropy(logits, labels)
-                          + torch.nn.functional.cross_entropy(logits.t(), labels))
+            # ClapModel.forward computes the symmetric contrastive loss itself
+            # (with its own learned logit scale) — no hand-rolled InfoNCE needed.
+            loss = model(**audio_in, **text_in, return_loss=True).loss
 
             opt.zero_grad()
             loss.backward()
