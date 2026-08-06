@@ -78,10 +78,20 @@ the model card.
 | `spaces/` | HF Docker Space deploy |
 | `eval/` | recall, parity, taste A/B, failure tests |
 
+## Results
+
+Producer-vocabulary retrieval on held-out pairs — LoRA (attention layers, 12 epochs)
+vs base CLAP. [Model on HF](https://huggingface.co/jahnaviym/crate-clap-lora).
+
+| metric | base CLAP | fine-tuned |
+|---|---|---|
+| recall@1 | 0.21 | **0.40** |
+| recall@5 | 0.58 | **0.87** |
+| recall@10 | 0.75 | **0.95** |
+
 ## Status
 
 Built phase by phase — see commit history. Landing page: `docs/` (GitHub Pages).
-Results table (fine-tuned vs base CLAP on producer vocab) lands after training.
 
 ## License
 
