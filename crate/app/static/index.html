@@ -9,183 +9,188 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
     :root{
-      --parchment:#d8cbb8; --linen:#bfb4a3; --stone:#b6ab9c; --walnut:#978e81;
-      --espresso:#615b53; --onyx:#2c2c2c; --midnight:#292622; --saffron:#d49653;
+      --parchment:#e4dac9; --linen:#efe8db; --stone:#b6ab9c; --walnut:#7d7466;
+      --espresso:#5a5249; --onyx:#242220; --midnight:#1c1a17; --saffron:#e0975a;
       --paper:var(--parchment); --ink:var(--onyx); --card:var(--linen); --muted:var(--walnut);
-      --bd:2.5px solid var(--ink); --hair:1px solid var(--stone); --sh:5px 5px 0 var(--ink);
+      --line:#c9bda9; --bd:2.5px solid var(--ink); --hair:1px solid var(--line);
+      --sh:5px 5px 0 var(--ink); --wave:#b8ab97;
       --serif:"Cormorant Garamond",Georgia,serif; --sans:"Inter",system-ui,sans-serif;
-      --ease:cubic-bezier(.25,.46,.45,.94); --wave:var(--onyx);
+      --ease:cubic-bezier(.25,.46,.45,.94);
     }
     @media (prefers-color-scheme:dark){
-      :root{ --paper:var(--midnight); --ink:var(--parchment); --card:#33302b;
-             --muted:var(--stone); --sh:5px 5px 0 #000; --hair:1px solid #4a4640; --wave:var(--saffron); }
+      :root{ --paper:#1c1a17; --ink:#efe8db; --card:#2b2823; --muted:#a89d8b;
+             --line:#403b34; --sh:5px 5px 0 #000; --wave:#3a352e; }
     }
     *{ box-sizing:border-box; }
     html{ scroll-behavior:smooth; }
     body{ margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans);
       font-weight:500; font-size:15px; line-height:1.4; letter-spacing:-.01em; overflow-x:hidden; }
 
-    /* animated sound-wave background */
+    /* faint sound-wave background — decorative, never competes with text */
     .wavebg{ position:fixed; inset:0; z-index:-1; display:flex; align-items:center;
-      gap:5px; padding:0 8px; opacity:.10; pointer-events:none; }
-    .wavebg span{ flex:1; height:100%; background:var(--wave); transform:scaleY(.1);
-      transform-origin:center; animation:eq 1.4s var(--ease) infinite; }
-    @keyframes eq{ 0%,100%{ transform:scaleY(.06);} 50%{ transform:scaleY(1);} }
+      gap:8px; padding:0 6px; opacity:.3; pointer-events:none; }
+    .wavebg span{ flex:1; height:70%; background:var(--wave); transform:scaleY(.08);
+      transform-origin:center; animation:eq 1.5s var(--ease) infinite; }
+    @keyframes eq{ 0%,100%{ transform:scaleY(.05);} 50%{ transform:scaleY(1);} }
 
-    .wrap{ max-width:1160px; margin:0 auto; padding:0 22px 90px; }
+    .wrap{ max-width:1120px; margin:0 auto; padding:0 22px 80px; }
 
-    /* ---------- nav ---------- */
-    nav{ display:flex; align-items:center; justify-content:space-between; padding:20px 0 8px; }
-    nav .logo{ font-weight:700; font-size:15px; text-transform:uppercase; letter-spacing:.12em; }
+    nav{ display:flex; align-items:center; justify-content:space-between; padding:16px 0 6px; }
+    nav .logo{ font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:.14em; }
     nav .logo b{ color:var(--saffron); }
-    nav .links{ display:flex; gap:22px; align-items:center; }
+    nav .links{ display:flex; gap:20px; align-items:center; }
     nav a{ font-size:12px; font-weight:500; text-transform:uppercase; letter-spacing:.1em;
       color:var(--ink); text-decoration:none; transition:color .15s; }
     nav a:hover{ color:var(--saffron); }
-    nav a .ext{ font-size:.85em; opacity:.6; }
+    nav a .ext{ opacity:.55; }
 
-    /* ---------- hero ---------- */
-    .hero{ display:grid; grid-template-columns:1.1fr auto; gap:36px; align-items:center;
-      padding:18px 0 26px; }
-    .brand{ font-weight:700; font-size:clamp(3.6rem,12vw,7.5rem); line-height:.8;
-      letter-spacing:-.055em; text-transform:uppercase; margin:0; animation:rise .7s var(--ease) both; }
+    /* ---------- compact hero (fits above the fold with the search) ---------- */
+    .hero{ display:flex; align-items:center; justify-content:space-between; gap:24px;
+      padding:10px 0 18px; }
+    .hero .lead{ min-width:0; }
+    .brand{ font-weight:700; font-size:clamp(2.6rem,7vw,4.4rem); line-height:.82;
+      letter-spacing:-.05em; text-transform:uppercase; margin:0; animation:rise .6s var(--ease) both; }
     .brand .u{ display:inline-block; background:var(--saffron); color:var(--midnight);
-      padding:0 .1em; border:var(--bd); box-shadow:var(--sh); }
-    .tagline{ font-family:var(--serif); font-weight:300; font-style:italic;
-      font-size:clamp(1.35rem,3.6vw,2.1rem); color:var(--espresso); margin:16px 2px 0;
-      line-height:1.12; max-width:32ch; animation:rise .7s .1s var(--ease) both; }
+      padding:0 .08em; border:var(--bd); box-shadow:3px 3px 0 var(--ink); }
+    .tagline{ font-family:var(--serif); font-weight:400; font-style:italic;
+      font-size:clamp(1.15rem,2.6vw,1.55rem); color:var(--espresso); margin:10px 2px 0;
+      line-height:1.15; max-width:40ch; animation:rise .6s .08s var(--ease) both; }
     @media (prefers-color-scheme:dark){ .tagline{ color:var(--stone); } }
 
-    /* turntable */
-    .deck{ position:relative; width:clamp(150px,22vw,220px); height:clamp(150px,22vw,220px);
-      flex:none; animation:rise .7s .15s var(--ease) both; }
-    .disc{ width:100%; height:100%; animation:spin 6s linear infinite; }
-    body.busy .disc{ animation-duration:.55s; }
-    .disc .ring{ fill:none; stroke:var(--parchment); stroke-opacity:.55; }
-    .arm{ position:absolute; top:6%; right:4%; width:46%; height:auto; transform-origin:top right;
-      transform:rotate(0deg); }
-    .arm line{ stroke:var(--ink); stroke-width:5; stroke-linecap:round; }
-    .arm circle{ fill:var(--ink); }
+    /* glowing spinning record */
+    .deck{ position:relative; width:clamp(96px,15vw,150px); height:clamp(96px,15vw,150px); flex:none; }
+    .deck::before{ content:""; position:absolute; inset:-22%; border-radius:50%; z-index:-1;
+      background:radial-gradient(circle, var(--saffron) 0%, transparent 66%);
+      opacity:.35; animation:halo 2.6s var(--ease) infinite; }
+    body.busy .deck::before{ animation-duration:1s; opacity:.55; }
+    .disc{ width:100%; height:100%; display:block; animation:spin 5s linear infinite;
+      filter:drop-shadow(0 3px 6px rgba(0,0,0,.35)); }
+    body.busy .disc{ animation-duration:.5s; }
+    .disc .ring{ fill:none; stroke:#efe8db; stroke-opacity:.5; }
+    .disc .shine{ stroke:#fff; stroke-opacity:.5; }
 
-    .marquee{ margin:8px 0 30px; border-top:var(--bd); border-bottom:var(--bd); overflow:hidden; white-space:nowrap; }
-    .marquee .track{ display:inline-block; padding:9px 0; animation:scroll 24s linear infinite;
-      font-family:var(--serif); font-weight:400; font-size:1.3rem; text-transform:uppercase; letter-spacing:.02em; }
-    .marquee .track span{ padding:0 24px; color:var(--espresso); }
-    .marquee .track .dot{ color:var(--saffron); }
-    @media (prefers-color-scheme:dark){ .marquee .track span{ color:var(--stone); } }
+    .eyebrow{ font-size:11.5px; font-weight:500; text-transform:uppercase; letter-spacing:.14em; color:var(--muted); margin:0 0 10px; }
 
-    .eyebrow{ font-size:12px; font-weight:500; text-transform:uppercase; letter-spacing:.14em; color:var(--muted); margin:0 0 13px; }
+    /* ---------- search card — the focal surface, fully opaque ---------- */
+    .card{ background:var(--card); border:var(--bd); box-shadow:var(--sh); padding:22px; }
+    .chips{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
+    .chip{ font-size:11.5px; font-weight:500; text-transform:uppercase; letter-spacing:.09em;
+      border:var(--hair); padding:8px 12px; background:transparent; color:var(--muted);
+      display:flex; gap:7px; align-items:center; cursor:pointer;
+      transition:transform .16s var(--ease), color .16s, border-color .16s; }
+    .chip:hover{ transform:translateY(-2px); color:var(--saffron); border-color:var(--saffron); }
 
-    .chips{ display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
-    .chip{ font-size:12px; font-weight:500; text-transform:uppercase; letter-spacing:.1em;
-      border:var(--bd); padding:10px 14px; background:var(--card); color:var(--ink);
-      display:flex; gap:8px; align-items:center; cursor:pointer;
-      transition:transform .18s var(--ease), box-shadow .18s var(--ease), background .18s; }
-    .chip:hover{ transform:translate(-2px,-2px) rotate(-1deg); box-shadow:var(--sh); background:var(--saffron); color:var(--midnight); }
-    .chip:active{ transform:translate(1px,1px); }
-
-    .card{ background:var(--card); border:var(--bd); box-shadow:var(--sh); padding:24px; }
-    .row{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+    .row{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
     input[type=text]{ flex:1 1 260px; background:var(--paper); border:var(--bd); border-radius:3px;
-      color:var(--ink); padding:15px 16px; font-family:var(--sans); font-weight:500; font-size:15px; }
+      color:var(--ink); padding:16px; font-family:var(--sans); font-weight:500; font-size:16px; }
     input[type=text]:focus{ outline:none; box-shadow:var(--sh); }
     input::placeholder{ color:var(--walnut); }
 
     button{ border:var(--bd); border-radius:3px; background:var(--paper); color:var(--ink);
       font-family:var(--sans); font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:.08em;
-      padding:14px 18px; cursor:pointer; box-shadow:var(--sh); display:inline-flex; gap:8px; align-items:center;
+      padding:15px 18px; cursor:pointer; box-shadow:var(--sh); display:inline-flex; gap:8px; align-items:center;
       transition:transform .15s var(--ease), box-shadow .15s var(--ease), background .15s; }
     button:hover{ transform:translate(-2px,-2px); box-shadow:7px 7px 0 var(--ink); }
     button:active{ transform:translate(2px,2px); box-shadow:2px 2px 0 var(--ink); }
     button:disabled{ opacity:.4; cursor:not-allowed; box-shadow:var(--sh); transform:none; }
-    button.accent{ background:var(--saffron); color:var(--midnight); }
+    /* primary CTA — the one obvious action */
+    button.accent{ background:var(--saffron); color:var(--midnight); border-color:var(--onyx); }
     button.rec.on{ animation:pulse 1s var(--ease) infinite; }
+    button.ghost{ box-shadow:none; border:var(--hair); color:var(--muted); font-weight:500; }
+    button.ghost:hover{ box-shadow:none; color:var(--ink); border-color:var(--ink); transform:translateY(-2px); }
 
-    #drop{ margin-top:16px; border:2.5px dashed var(--ink); padding:26px; text-align:center;
-      color:var(--muted); cursor:pointer; background:var(--paper);
-      transition:transform .15s var(--ease), box-shadow .15s var(--ease); }
-    #drop:hover{ transform:translate(-2px,-2px); box-shadow:var(--sh); }
-    #drop.hot{ border-style:solid; background:var(--saffron); color:var(--midnight); box-shadow:var(--sh); }
+    #drop{ margin-top:14px; border:2px dashed var(--line); padding:18px; text-align:center;
+      color:var(--muted); cursor:pointer; background:transparent; font-size:13px;
+      transition:border-color .15s, color .15s; }
+    #drop:hover{ border-color:var(--saffron); color:var(--ink); }
+    #drop.hot{ border-style:solid; border-color:var(--saffron); background:color-mix(in srgb,var(--saffron) 16%,transparent); color:var(--ink); }
     #drop b{ color:var(--ink); font-weight:700; }
-    #drop.hot b{ color:var(--midnight); }
-    .hint{ font-size:12.5px; margin-top:7px; }
+    .hint{ font-size:12px; margin-top:5px; }
 
-    .examples{ display:flex; gap:9px; flex-wrap:wrap; align-items:center; margin-top:18px; }
+    .examples{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:14px; }
     .examples .lbl{ font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); }
-    .ex{ font-family:var(--serif); font-weight:500; font-size:1.05rem; border:var(--hair);
-      padding:5px 13px; background:transparent; color:var(--ink); cursor:pointer;
+    .ex{ font-family:var(--serif); font-weight:500; font-size:1.02rem; border:var(--hair);
+      padding:4px 12px; background:transparent; color:var(--ink); cursor:pointer;
       transition:background .15s, color .15s, transform .15s var(--ease); }
-    .ex:hover{ background:var(--saffron); color:var(--midnight); transform:translateY(-2px); border-color:var(--onyx); }
+    .ex:hover{ background:var(--saffron); color:var(--midnight); transform:translateY(-2px); border-color:var(--saffron); }
 
-    #status{ margin-top:16px; font-size:13px; font-weight:500; color:var(--espresso); min-height:20px; }
+    #status{ margin-top:14px; font-size:13px; font-weight:500; color:var(--espresso); min-height:20px; }
     @media (prefers-color-scheme:dark){ #status{ color:var(--stone); } }
 
-    .results{ margin-top:32px; display:flex; flex-direction:column; gap:16px; }
-    .rolehdr{ font-family:var(--serif); font-weight:300; font-size:2.4rem; text-transform:uppercase;
-      letter-spacing:-.03em; line-height:.9; margin-top:14px; padding-bottom:8px; border-bottom:var(--hair); }
+    .results{ margin-top:28px; display:flex; flex-direction:column; gap:14px; }
+    .rolehdr{ font-family:var(--serif); font-weight:300; font-size:2.2rem; text-transform:uppercase;
+      letter-spacing:-.03em; line-height:.9; margin-top:12px; padding-bottom:8px; border-bottom:var(--hair); }
     .rolehdr::first-letter{ color:var(--saffron); }
 
-    .result{ background:var(--card); border:var(--bd); padding:16px; display:grid;
-      grid-template-columns:74px 1fr auto; gap:14px; align-items:center;
-      animation:rise .5s var(--ease) both; animation-delay:calc(var(--i,0)*70ms);
+    .result{ background:var(--card); border:var(--bd); padding:15px; display:grid;
+      grid-template-columns:72px 1fr auto; gap:14px; align-items:center;
+      animation:rise .45s var(--ease) both; animation-delay:calc(var(--i,0)*60ms);
       transition:transform .15s var(--ease), box-shadow .15s var(--ease); }
     .result:hover{ transform:translate(-3px,-3px); box-shadow:var(--sh); }
     .match{ text-align:center; }
-    .match .pct{ font-family:var(--serif); font-weight:500; font-size:1.7rem; line-height:1; color:var(--saffron); }
-    .match .bar{ height:6px; margin-top:6px; border:2px solid var(--ink); overflow:hidden; background:var(--paper); }
+    .match .pct{ font-family:var(--serif); font-weight:500; font-size:1.6rem; line-height:1; color:var(--saffron); }
+    .match .bar{ height:5px; margin-top:5px; border:1.5px solid var(--ink); overflow:hidden; background:var(--paper); }
     .match .bar i{ display:block; height:100%; background:var(--saffron); width:0; transition:width .6s var(--ease) .1s; }
     .meta{ min-width:0; }
-    .meta .t{ font-family:var(--serif); font-weight:500; font-size:1.5rem; line-height:1.05;
+    .meta .t{ font-family:var(--serif); font-weight:500; font-size:1.45rem; line-height:1.05;
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .meta .sub{ font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-top:3px; }
-    .meta audio{ width:100%; height:32px; margin-top:9px; filter:grayscale(.3); }
+    .meta audio{ width:100%; height:30px; margin-top:8px; filter:grayscale(.25); }
     .fb{ display:flex; flex-direction:column; gap:8px; }
     .fb button{ padding:9px 12px; box-shadow:3px 3px 0 var(--ink); }
-    .result.saved{ background:color-mix(in srgb, var(--saffron) 25%, var(--card)); }
+    .result.saved{ background:color-mix(in srgb, var(--saffron) 22%, var(--card)); }
     .result.skipped{ opacity:.38; }
 
-    .dash{ margin-top:40px; }
-    .dash .card{ display:flex; gap:26px; flex-wrap:wrap; align-items:baseline; }
+    .dash{ margin-top:34px; }
+    .dash .card{ display:flex; gap:24px; flex-wrap:wrap; align-items:baseline; }
     .dash .lbl{ font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); }
-    .dash b{ font-family:var(--serif); font-weight:500; font-size:1.5rem; color:var(--saffron); }
+    .dash b{ font-family:var(--serif); font-weight:500; font-size:1.4rem; color:var(--saffron); }
+
+    .marquee{ margin:44px 0 0; border-top:var(--hair); border-bottom:var(--hair); overflow:hidden; white-space:nowrap; }
+    .marquee .track{ display:inline-block; padding:9px 0; animation:scroll 24s linear infinite;
+      font-family:var(--serif); font-weight:400; font-size:1.25rem; text-transform:uppercase; letter-spacing:.02em; }
+    .marquee .track span{ padding:0 22px; color:var(--muted); }
+    .marquee .track .dot{ color:var(--saffron); }
 
     /* ---------- model card ---------- */
-    .modelcard{ margin-top:72px; padding-top:36px; border-top:var(--bd); }
-    .modelcard h2{ font-family:var(--serif); font-weight:300; font-size:clamp(2.6rem,7vw,4.4rem);
+    .modelcard{ margin-top:56px; padding-top:34px; border-top:var(--bd); }
+    .modelcard h2{ font-family:var(--serif); font-weight:300; font-size:clamp(2.4rem,6vw,3.8rem);
       text-transform:uppercase; letter-spacing:-.04em; line-height:.85; margin:0 0 8px; }
     .modelcard h2 .u{ color:var(--saffron); }
     .modelcard .lede{ font-family:var(--serif); font-style:italic; font-weight:400;
-      font-size:1.4rem; color:var(--espresso); max-width:60ch; margin:0 0 30px; }
+      font-size:1.3rem; color:var(--espresso); max-width:60ch; margin:0 0 26px; }
     @media (prefers-color-scheme:dark){ .modelcard .lede{ color:var(--stone); } }
-    .mc-grid{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-    .mc-grid .card h3{ font-size:12px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); margin:0 0 12px; }
-    .flow{ font-family:var(--serif); font-size:1.15rem; line-height:1.7; }
+    .mc-grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+    .mc-grid .card h3, .stackcard h3{ font-size:11.5px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); margin:0 0 12px; }
+    .flow{ font-family:var(--serif); font-size:1.12rem; line-height:1.7; }
     .flow b{ color:var(--saffron); font-weight:500; }
     table.mc{ width:100%; border-collapse:collapse; font-size:14px; }
-    table.mc th, table.mc td{ border:var(--hair); padding:9px 11px; text-align:left; }
+    table.mc th, table.mc td{ border:var(--hair); padding:8px 10px; text-align:left; }
     table.mc th{ font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:500; }
-    table.mc td.n{ font-family:var(--serif); font-size:1.2rem; }
+    table.mc td.n{ font-family:var(--serif); font-size:1.15rem; }
     table.mc td.ft{ color:var(--saffron); font-weight:500; }
+    .stackcard{ margin-top:18px; }
     .stack{ display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
-    .stack span{ font-size:11px; text-transform:uppercase; letter-spacing:.06em; border:var(--hair); padding:5px 9px; }
-    .mc-links{ display:flex; gap:14px; flex-wrap:wrap; margin-top:26px; }
+    .stack span{ font-size:11px; text-transform:uppercase; letter-spacing:.06em; border:var(--hair); padding:5px 9px; color:var(--muted); }
+    .mc-links{ display:flex; gap:14px; flex-wrap:wrap; margin-top:24px; }
     .mc-links a{ text-decoration:none; }
 
     svg.i{ width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
     a{ color:var(--saffron); font-weight:700; }
-    footer{ margin-top:44px; font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); }
+    footer{ margin-top:40px; font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); }
 
     @keyframes spin{ to{ transform:rotate(360deg); } }
+    @keyframes halo{ 0%,100%{ opacity:.25; transform:scale(.94); } 50%{ opacity:.45; transform:scale(1.06); } }
     @keyframes scroll{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
-    @keyframes rise{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:none; } }
+    @keyframes rise{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:none; } }
     @keyframes pulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.05); box-shadow:7px 7px 0 var(--ink); } }
     @media (prefers-reduced-motion:reduce){ *{ animation:none!important; transition:none!important; } }
 
     @media (max-width:720px){
-      .hero{ grid-template-columns:1fr; } .deck{ display:none; }
+      .hero{ gap:14px; } .deck{ width:84px; height:84px; }
       .mc-grid{ grid-template-columns:1fr; }
-      nav .links{ gap:14px; } nav a{ font-size:11px; }
-      .result{ grid-template-columns:60px 1fr; } .fb{ grid-column:1/-1; flex-direction:row; }
+      nav .links{ gap:13px; } nav a{ font-size:11px; }
+      .result{ grid-template-columns:56px 1fr; } .fb{ grid-column:1/-1; flex-direction:row; }
     }
   </style>
 </head>
@@ -202,60 +207,49 @@
     </nav>
 
     <div class="hero">
-      <div>
+      <div class="lead">
         <h1 class="brand">Cr<span class="u">a</span>te</h1>
-        <p class="tagline">Search the sound, not the word. Hum it, drop a track, or describe it.</p>
+        <p class="tagline">Search the sound, not the word — hum it, drop a track, or describe it.</p>
       </div>
       <div class="deck">
         <svg class="disc" viewBox="0 0 200 200" aria-hidden="true">
-          <circle cx="100" cy="100" r="99" fill="#1c1a17"/>
+          <circle cx="100" cy="100" r="99" fill="#151310"/>
           <g class="ring">
-            <circle cx="100" cy="100" r="90"/><circle cx="100" cy="100" r="80"/>
-            <circle cx="100" cy="100" r="70"/><circle cx="100" cy="100" r="60"/>
-            <circle cx="100" cy="100" r="50"/>
+            <circle cx="100" cy="100" r="90"/><circle cx="100" cy="100" r="79"/>
+            <circle cx="100" cy="100" r="68"/><circle cx="100" cy="100" r="57"/>
           </g>
-          <circle cx="100" cy="100" r="36" fill="#d49653"/>
-          <circle cx="100" cy="100" r="36" fill="none" stroke="#1c1a17" stroke-width="1.5"/>
-          <circle cx="100" cy="100" r="6" fill="#1c1a17"/>
+          <path class="shine" d="M100 12 A88 88 0 0 1 168 52" fill="none" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="100" cy="100" r="34" fill="#e0975a"/>
+          <circle cx="100" cy="100" r="34" fill="none" stroke="#151310" stroke-width="1.5"/>
+          <circle cx="100" cy="100" r="5.5" fill="#151310"/>
         </svg>
-        <svg class="arm" viewBox="0 0 100 100" aria-hidden="true">
-          <line x1="92" y1="8" x2="40" y2="70"/>
-          <circle cx="92" cy="8" r="7"/><circle cx="40" cy="70" r="4"/>
-        </svg>
-      </div>
-    </div>
-
-    <div class="marquee" aria-hidden="true">
-      <div class="track">
-        <span>Boom-bap</span><span class="dot">✦</span><span>Reese bass</span><span class="dot">✦</span><span>Tape-saturated</span><span class="dot">✦</span><span>Rimshot</span><span class="dot">✦</span><span>Vinyl crackle</span><span class="dot">✦</span><span>Jazzy rhodes</span><span class="dot">✦</span><span>808 kick</span><span class="dot">✦</span><span>Dusty break</span><span class="dot">✦</span><span>Boom-bap</span><span class="dot">✦</span><span>Reese bass</span><span class="dot">✦</span><span>Tape-saturated</span><span class="dot">✦</span><span>Rimshot</span><span class="dot">✦</span><span>Vinyl crackle</span><span class="dot">✦</span><span>Jazzy rhodes</span><span class="dot">✦</span><span>808 kick</span><span class="dot">✦</span><span>Dusty break</span><span class="dot">✦</span>
       </div>
     </div>
 
     <p class="eyebrow">Three ways in — one embedding space</p>
-    <div class="chips">
-      <span class="chip" id="chip-hum"><svg class="i" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><path d="M12 18v4"/></svg>Hum it</span>
-      <span class="chip" id="chip-drop"><svg class="i" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Drop a track</span>
-      <span class="chip" id="chip-desc"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M4 12h10"/><path d="M4 17h7"/></svg>Describe</span>
-    </div>
-
     <div class="card">
+      <div class="chips">
+        <span class="chip" id="chip-hum"><svg class="i" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><path d="M12 18v4"/></svg>Hum it</span>
+        <span class="chip" id="chip-drop"><svg class="i" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Drop a track</span>
+        <span class="chip" id="chip-desc"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M4 12h10"/><path d="M4 17h7"/></svg>Describe</span>
+      </div>
+
       <div class="row">
         <input id="q" type="text" placeholder="dusty boom-bap break but darker" />
         <button class="accent" id="go">
           <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>Search</button>
-        <button class="rec" id="mic">
+        <button class="rec ghost" id="mic">
           <svg class="i" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/></svg>
           <span>Rec hum</span></button>
       </div>
 
       <div id="drop">
-        <b>Click to upload</b> or drop a sample / reference track
-        <div class="hint">A file searches by sound. Split it into drums · bass · texture with <b>Build crate</b>.</div>
+        <b>Click to upload</b> or drop a track — <span class="hint" style="display:inline">then <b>Build crate</b> to split it into drums · bass · texture</span>
       </div>
       <input id="file" type="file" accept="audio/*" hidden />
 
-      <div class="row" style="margin-top:16px">
-        <button id="buildCrate" disabled>
+      <div class="row" style="margin-top:12px">
+        <button class="ghost" id="buildCrate" disabled>
           <svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
           Build crate from dropped track</button>
       </div>
@@ -284,7 +278,12 @@
       </div>
     </div>
 
-    <!-- ---------- model card ---------- -->
+    <div class="marquee" aria-hidden="true">
+      <div class="track">
+        <span>Boom-bap</span><span class="dot">✦</span><span>Reese bass</span><span class="dot">✦</span><span>Tape-saturated</span><span class="dot">✦</span><span>Rimshot</span><span class="dot">✦</span><span>Vinyl crackle</span><span class="dot">✦</span><span>Jazzy rhodes</span><span class="dot">✦</span><span>808 kick</span><span class="dot">✦</span><span>Dusty break</span><span class="dot">✦</span><span>Boom-bap</span><span class="dot">✦</span><span>Reese bass</span><span class="dot">✦</span><span>Tape-saturated</span><span class="dot">✦</span><span>Rimshot</span><span class="dot">✦</span><span>Vinyl crackle</span><span class="dot">✦</span><span>Jazzy rhodes</span><span class="dot">✦</span><span>808 kick</span><span class="dot">✦</span><span>Dusty break</span><span class="dot">✦</span>
+      </div>
+    </div>
+
     <section class="modelcard" id="model-card">
       <h2>The <span class="u">build</span></h2>
       <p class="lede">Producers search sound with words, and audio metadata is garbage. Crate makes the
@@ -313,7 +312,7 @@
         </div>
       </div>
 
-      <div class="card" style="margin-top:20px">
+      <div class="card stackcard">
         <h3>Stack</h3>
         <div class="stack">
           <span>CLAP + PEFT LoRA</span><span>Demucs stems</span><span>FAISS</span>
