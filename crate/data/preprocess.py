@@ -33,25 +33,36 @@ def preprocess_one(src: str | Path) -> np.ndarray:
     return fix_length(load_audio(src))
 
 
-def run() -> int:
-    """Preprocess every metadata clip whose cache is missing. Returns count done."""
+def _process(rec: dict) -> bool:
+    """Decode+resample one clip to cache. Returns True if written."""
+    out = config.AUDIO_DIR / f"{rec['id']}.npy"
+    if out.exists():
+        return False
+    try:
+        np.save(out, preprocess_one(rec["path"]))
+        return True
+    except Exception as e:  # skip corrupt/missing files, keep going
+        print(f"skip {rec['id']}: {e}")
+        return False
+
+
+def run(workers: int = 8) -> int:
+    """Preprocess every uncached clip in parallel. Returns count done.
+
+    # ponytail: threads — librosa/soundfile release the GIL during decode+resample,
+    # so this overlaps well; switch to ProcessPoolExecutor if pure-CPU resampling
+    # dominates on a many-core box.
+    """
+    from concurrent.futures import ThreadPoolExecutor
+
+    from tqdm import tqdm
+
     config.ensure_dirs()
     if not config.META_PATH.exists():
         raise FileNotFoundError("no metadata.jsonl — run ingest first")
-    done = 0
-    for line in config.META_PATH.read_text().splitlines():
-        rec = json.loads(line)
-        out = config.AUDIO_DIR / f"{rec['id']}.npy"
-        if out.exists():
-            continue
-        try:
-            wav = preprocess_one(rec["path"])
-        except Exception as e:  # skip corrupt/missing files, keep going
-            print(f"skip {rec['id']}: {e}")
-            continue
-        np.save(out, wav)
-        done += 1
-    return done
+    recs = [json.loads(line) for line in config.META_PATH.read_text().splitlines()]
+    with ThreadPoolExecutor(workers) as ex:
+        return sum(tqdm(ex.map(_process, recs), total=len(recs), desc="preprocess"))
 
 
 if __name__ == "__main__":

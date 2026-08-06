@@ -91,40 +91,52 @@ def download_preview(sound: dict, dest_dir: Path) -> Path | None:
     return dest
 
 
-def ingest(queries: list[str], per_query: int = 100) -> int:
-    """Search each query, download previews, append metadata. Returns clip count."""
+def ingest(queries: list[str], per_query: int = 100, workers: int = 16) -> int:
+    """Search all queries, then download previews in parallel. Returns clip count.
+
+    Search is rate-limited (sequential); downloads are network-bound so they run
+    on a thread pool — the bottleneck, and where the 10x speedup lives.
+    """
+    from concurrent.futures import ThreadPoolExecutor
+
+    from tqdm import tqdm
+
     config.ensure_dirs()
     seen = _existing_ids()
-    written = 0
-    with open(config.META_PATH, "a") as meta:
-        for q in queries:
-            try:
-                hits = search(q, max_results=per_query)
-            except requests.HTTPError as e:
-                print(f"  skip query '{q}': {e}")
-                continue
-            for s in hits:
-                if s["id"] in seen:
-                    continue
-                try:
-                    path = download_preview(s, config.RAW_DIR)
-                except requests.HTTPError as e:
-                    print(f"  skip download {s['id']}: {e}")
-                    continue
-                if path is None:
-                    continue
-                text = _caption(s, q)
-                meta.write(json.dumps({
-                    "id": f"fs_{s['id']}",
-                    "path": str(path),
-                    "text": text,
-                    "tags": s.get("tags", []),
-                    "license": s["license"],
-                    "attribution": s.get("username", ""),
-                    "source": "freesound",
-                    "query": q,
-                }) + "\n")
+
+    # 1. search phase (API, rate-limited) → dedup'd candidate list
+    candidates = []
+    for q in tqdm(queries, desc="search"):
+        try:
+            hits = search(q, max_results=per_query)
+        except requests.HTTPError as e:
+            print(f"  skip query '{q}': {e}")
+            continue
+        for s in hits:
+            if s["id"] not in seen:
                 seen.add(s["id"])
+                candidates.append((s, q))
+
+    # 2. download phase (parallel, network-bound)
+    def fetch(item):
+        s, q = item
+        try:
+            path = download_preview(s, config.RAW_DIR)
+        except requests.HTTPError:
+            return None
+        if path is None:
+            return None
+        return {
+            "id": f"fs_{s['id']}", "path": str(path), "text": _caption(s, q),
+            "tags": s.get("tags", []), "license": s["license"],
+            "attribution": s.get("username", ""), "source": "freesound", "query": q,
+        }
+
+    written = 0
+    with open(config.META_PATH, "a") as meta, ThreadPoolExecutor(workers) as ex:
+        for rec in tqdm(ex.map(fetch, candidates), total=len(candidates), desc="download"):
+            if rec:
+                meta.write(json.dumps(rec) + "\n")
                 written += 1
     return written
 
