@@ -30,7 +30,7 @@
     .wavebg{ position:fixed; inset:0; z-index:-1; display:flex; align-items:center;
       gap:8px; padding:0 6px; opacity:.3; pointer-events:none; }
     .wavebg span{ flex:1; height:70%; background:var(--wave); transform:scaleY(.08);
-      transform-origin:center; animation:eq 1.5s var(--ease) infinite; }
+      transform-origin:center; animation:eq 3.4s var(--ease) infinite; }
     @keyframes eq{ 0%,100%{ transform:scaleY(.05);} 50%{ transform:scaleY(1);} }
 
     .wrap{ max-width:1120px; margin:0 auto; padding:0 22px 80px; }
@@ -63,7 +63,7 @@
       background:radial-gradient(circle, var(--saffron) 0%, transparent 66%);
       opacity:.35; animation:halo 2.6s var(--ease) infinite; }
     body.busy .deck::before{ animation-duration:1s; opacity:.55; }
-    .disc{ width:100%; height:100%; display:block; animation:spin 5s linear infinite;
+    .disc{ width:100%; height:100%; display:block; animation:spin 12s linear infinite;
       filter:drop-shadow(0 3px 6px rgba(0,0,0,.35)); }
     body.busy .disc{ animation-duration:.5s; }
     .disc .ring{ fill:none; stroke:#efe8db; stroke-opacity:.5; }
