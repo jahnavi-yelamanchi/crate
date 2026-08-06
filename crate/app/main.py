@@ -29,6 +29,19 @@ app = FastAPI(title="Crate", description="Sound-native search for producers")
 STATIC = Path(__file__).parent / "static"
 
 _AGENT = None
+_META = None
+
+
+def _meta() -> dict[str, str]:
+    """clip id → source file path, read once. Used to stream audio without the model."""
+    global _META
+    if _META is None:
+        _META = {}
+        if config.META_PATH.exists():
+            for line in config.META_PATH.read_text().splitlines():
+                rec = json.loads(line)
+                _META[rec["id"]] = rec.get("path", "")
+    return _META
 
 
 def agent():
@@ -86,9 +99,24 @@ async def search(
 async def crate(session_id: str = Form(None), audio: UploadFile = File(...)):
     sid = session_id or uuid.uuid4().hex
     wav = _decode_upload(audio)
-    from crate.agent.crate_builder import build_kit
+    try:
+        from crate.agent.crate_builder import build_kit
 
-    return JSONResponse({"session_id": sid, "kit": build_kit(wav)})
+        kit = build_kit(wav)
+    except ImportError as e:
+        raise HTTPException(503, f"stem separation needs Demucs — `pip install demucs`. ({e})") from e
+    except FileNotFoundError as e:
+        raise HTTPException(503, f"not ready: {e}. Build the index first.") from e
+    return JSONResponse({"session_id": sid, "kit": kit})
+
+
+@app.get("/audio/{clip_id}")
+def audio_clip(clip_id: str):
+    """Stream a result's source clip so the browser can play it."""
+    path = _meta().get(clip_id)
+    if not path or not Path(path).exists():
+        raise HTTPException(404, "clip not found")
+    return FileResponse(path)
 
 
 @app.post("/save")
