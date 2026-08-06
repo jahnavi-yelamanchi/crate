@@ -28,10 +28,20 @@
     .chips{ display:flex; gap:10px; flex-wrap:wrap; margin:20px 0 22px; }
     .chip{ font:500 .78rem/1 system-ui; text-transform:uppercase; letter-spacing:.06em;
       border:var(--bd); border-radius:var(--r); padding:8px 11px; background:var(--card);
-      display:flex; gap:7px; align-items:center; }
+      display:flex; gap:7px; align-items:center; cursor:pointer;
+      transition:transform .08s ease, box-shadow .08s ease; }
+    .chip:hover{ transform:translate(-1px,-1px); box-shadow:var(--sh); }
+    .chip:active{ transform:translate(1px,1px); }
     .chip.c1{ background:var(--yellow); color:#141414; }
     .chip.c2{ background:var(--red); color:#141414; }
     .chip.c3{ background:var(--blue); color:#fff; }
+
+    .examples{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:16px; }
+    .examples .lbl{ font:500 .72rem/1 var(--mono); text-transform:uppercase;
+      letter-spacing:.08em; color:var(--muted); }
+    .ex{ font:500 .82rem system-ui; border:2px solid var(--ink); border-radius:var(--r);
+      padding:6px 11px; background:var(--card); color:var(--ink); cursor:pointer; }
+    .ex:hover{ background:var(--yellow); color:#141414; }
 
     .card{ background:var(--card); border:var(--bd); border-radius:var(--r);
       box-shadow:var(--sh); padding:18px; }
@@ -99,9 +109,9 @@
     </header>
 
     <div class="chips">
-      <span class="chip c1"><svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><path d="M12 18v4"/></svg>Hum</span>
-      <span class="chip c2"><svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Drop a track</span>
-      <span class="chip c3"><svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M4 12h10"/><path d="M4 17h7"/></svg>Describe</span>
+      <span class="chip c1" id="chip-hum"><svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><path d="M12 18v4"/></svg>Hum</span>
+      <span class="chip c2" id="chip-drop"><svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Drop a track</span>
+      <span class="chip c3" id="chip-desc"><svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M4 12h10"/><path d="M4 17h7"/></svg>Describe</span>
     </div>
 
     <div class="card">
@@ -125,6 +135,17 @@
           <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
           Build crate from dropped track</button>
       </div>
+
+      <div class="examples" id="examples">
+        <span class="lbl">Try</span>
+        <span class="ex">boom-bap break</span>
+        <span class="ex">reese bass</span>
+        <span class="ex">tape-saturated pad</span>
+        <span class="ex">jazzy rhodes chords</span>
+        <span class="ex">808 kick</span>
+        <span class="ex">vinyl crackle texture</span>
+      </div>
+
       <div id="status"></div>
     </div>
 

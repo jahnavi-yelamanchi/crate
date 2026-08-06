@@ -149,6 +149,22 @@ $("mic").onclick = async () => {
   } catch (e) { setStatus("mic blocked: " + e.message); }
 };
 
+// --- shortcut chips: the three ways in ---
+$("chip-hum").onclick = () => $("mic").click();
+$("chip-drop").onclick = () => $("file").click();
+$("chip-desc").onclick = () => $("q").focus();
+
+// --- clickable example queries ---
+document.querySelectorAll("#examples .ex").forEach((el) => {
+  el.onclick = () => { $("q").value = el.textContent; searchText(); };
+});
+
+// --- first visit: run one example so the page isn't empty (and warms the model) ---
+window.addEventListener("load", () => {
+  $("q").value = "boom-bap break";
+  searchText().catch(() => setStatus("")); // index not ready yet → stay quiet
+});
+
 // --- latency dashboard (only shown when real numbers exist) ---
 fetch("/latency").then((r) => r.json()).then((d) => {
   if (!d || !d.base_torch_cpu_ms) return;
