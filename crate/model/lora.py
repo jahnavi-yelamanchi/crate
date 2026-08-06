@@ -13,7 +13,6 @@ import numpy as np
 from crate import config
 from crate.data.pairs import load_split
 
-
 # attention Linear name fragments across CLAP's two towers (HTSAT audio + RoBERTa
 # text). Discovered at runtime so we don't hard-code names that drift across versions.
 _ATTN_HINTS = ("query", "key", "value", "dense", "qkv", "attention.output")
