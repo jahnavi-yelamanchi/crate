@@ -14,17 +14,30 @@ from crate import config
 from crate.data.pairs import load_split
 
 
-def _find_projection_linears(model) -> list[str]:
-    """Names of Linear modules inside the audio/text projection heads.
+# attention Linear name fragments across CLAP's two towers (HTSAT audio + RoBERTa
+# text). Discovered at runtime so we don't hard-code names that drift across versions.
+_ATTN_HINTS = ("query", "key", "value", "dense", "qkv", "attention.output")
 
-    Discovered at runtime so we don't hard-code names that drift across
-    transformers versions.
+
+def _find_targets(model, scope: str = "projection") -> list[str]:
+    """Names of Linear modules to attach LoRA to.
+
+    scope="projection": just the audio/text projection heads (cheap, ~0.05% params).
+    scope="attention":  projection heads + attention linears in both towers (more
+                        capacity — the real lever for learning producer vocab).
+    scope="all":        every Linear (MLPs included; strongest, slowest).
     """
     import torch.nn as nn
 
     names = []
     for name, mod in model.named_modules():
-        if isinstance(mod, nn.Linear) and "projection" in name:
+        if not isinstance(mod, nn.Linear):
+            continue
+        if scope == "all":
+            names.append(name)
+        elif "projection" in name:
+            names.append(name)
+        elif scope == "attention" and any(h in name for h in _ATTN_HINTS):
             names.append(name)
     return names
 
@@ -44,6 +57,7 @@ def train(
     lr: float = 1e-4,
     lora_r: int = 16,
     lora_alpha: int = 32,
+    target_scope: str = "projection",
     augment_prob: float = 0.5,
     push_to_hub: bool = False,
     seed: int = 0,
@@ -62,9 +76,9 @@ def train(
     processor = ClapProcessor.from_pretrained(config.CLAP_BASE)
     model = ClapModel.from_pretrained(config.CLAP_BASE)
 
-    targets = _find_projection_linears(model)
+    targets = _find_targets(model, target_scope)
     if not targets:
-        raise RuntimeError("no projection Linear modules found — check transformers version")
+        raise RuntimeError(f"no LoRA target Linear modules found for scope={target_scope!r}")
     model = get_peft_model(model, LoraConfig(
         r=lora_r, lora_alpha=lora_alpha, lora_dropout=0.05,
         target_modules=targets, bias="none",
