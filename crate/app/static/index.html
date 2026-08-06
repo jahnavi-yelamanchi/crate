@@ -4,135 +4,208 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Crate — sound-native search</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
-    :root {
-      --yellow:#FFEB3B; --red:#FF5252; --blue:#2196F3; --green:#00C853;
-      --ink:#141414; --paper:#FAFAF7; --card:#FFFFFF; --muted:#5c5c5c;
-      --bd:3px solid var(--ink); --sh:5px 5px 0 var(--ink); --r:8px;
-      --mono:ui-monospace,"JetBrains Mono",Menlo,monospace;
+    :root{
+      --parchment:#d8cbb8; --linen:#bfb4a3; --stone:#b6ab9c; --walnut:#978e81;
+      --espresso:#615b53; --onyx:#2c2c2c; --midnight:#292622; --saffron:#d49653;
+      --paper:var(--parchment); --ink:var(--onyx); --card:var(--linen); --muted:var(--walnut);
+      --bd:2.5px solid var(--ink); --hair:1px solid var(--stone); --sh:5px 5px 0 var(--ink);
+      --serif:"Cormorant Garamond",Georgia,serif; --sans:"Inter",system-ui,sans-serif;
+      --ease:cubic-bezier(.25,.46,.45,.94);
     }
     @media (prefers-color-scheme:dark){
-      :root{ --ink:#f2f2f2; --paper:#0e0e0e; --card:#1a1a1a; --muted:#a0a0a0;
-             --sh:5px 5px 0 #000; }
+      :root{ --paper:var(--midnight); --ink:var(--parchment); --card:#33302b;
+             --muted:var(--stone); --sh:5px 5px 0 #000; --hair:1px solid #4a4640; }
     }
     *{ box-sizing:border-box; }
-    body{ margin:0; background:var(--paper); color:var(--ink);
-      font:400 16px/1.55 system-ui,-apple-system,sans-serif; }
-    .wrap{ max-width:920px; margin:0 auto; padding:28px 20px 80px; }
+    html{ scroll-behavior:smooth; }
+    body{ margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans);
+      font-weight:500; font-size:15px; line-height:1.4; letter-spacing:-.01em;
+      overflow-x:hidden; }
+    .wrap{ max-width:1180px; margin:0 auto; padding:26px 22px 90px; }
 
-    header .mark{ display:inline-block; font-size:clamp(2.4rem,7vw,3.6rem); font-weight:800;
-      letter-spacing:-1px; line-height:1; background:var(--yellow); color:#141414;
-      border:var(--bd); box-shadow:var(--sh); border-radius:var(--r); padding:6px 16px; }
-    header p{ margin:16px 2px 0; color:var(--muted); font-size:1.05rem; }
+    /* ---------- hero ---------- */
+    .hero{ display:grid; grid-template-columns:1fr auto; gap:28px; align-items:center;
+      padding:22px 0 8px; }
+    .brand{ font-family:var(--sans); font-weight:700; font-size:clamp(3.2rem,11vw,7rem);
+      line-height:.82; letter-spacing:-.05em; text-transform:uppercase; margin:0;
+      animation:rise .7s var(--ease) both; }
+    .brand .u{ display:inline-block; background:var(--saffron); color:var(--midnight);
+      padding:0 .12em; border:var(--bd); box-shadow:var(--sh); }
+    .tagline{ font-family:var(--serif); font-weight:300; font-style:italic;
+      font-size:clamp(1.3rem,3.4vw,2rem); color:var(--espresso); margin:18px 2px 0;
+      line-height:1.15; max-width:34ch; animation:rise .7s .1s var(--ease) both; }
+    @media (prefers-color-scheme:dark){ .tagline{ color:var(--stone); } }
 
-    .chips{ display:flex; gap:10px; flex-wrap:wrap; margin:20px 0 22px; }
-    .chip{ font:500 .78rem/1 system-ui; text-transform:uppercase; letter-spacing:.06em;
-      border:var(--bd); border-radius:var(--r); padding:8px 11px; background:var(--card);
-      display:flex; gap:7px; align-items:center; cursor:pointer;
-      transition:transform .08s ease, box-shadow .08s ease; }
-    .chip:hover{ transform:translate(-1px,-1px); box-shadow:var(--sh); }
+    /* spinning vinyl */
+    .vinyl{ width:clamp(120px,20vw,190px); height:clamp(120px,20vw,190px); flex:none;
+      animation:spin 8s linear infinite; }
+    body.busy .vinyl{ animation-duration:.7s; }
+    .vinyl .grooves circle{ fill:none; stroke:var(--onyx); stroke-opacity:.35; }
+    @media (prefers-color-scheme:dark){ .vinyl .grooves circle{ stroke:var(--stone); stroke-opacity:.4; } }
+
+    /* ---------- marquee ---------- */
+    .marquee{ margin:26px 0; border-top:var(--bd); border-bottom:var(--bd); overflow:hidden;
+      white-space:nowrap; }
+    .marquee .track{ display:inline-block; padding:10px 0; animation:scroll 26s linear infinite;
+      font-family:var(--serif); font-weight:400; font-size:1.35rem; text-transform:uppercase;
+      letter-spacing:.02em; }
+    .marquee .track span{ padding:0 26px; color:var(--espresso); }
+    .marquee .track .dot{ color:var(--saffron); }
+    @media (prefers-color-scheme:dark){ .marquee .track span{ color:var(--stone); } }
+
+    /* ---------- section label ---------- */
+    .eyebrow{ font-size:12px; font-weight:500; text-transform:uppercase; letter-spacing:.14em;
+      color:var(--muted); margin:0 0 14px; }
+
+    /* ---------- chips ---------- */
+    .chips{ display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
+    .chip{ font-size:12px; font-weight:500; text-transform:uppercase; letter-spacing:.1em;
+      border:var(--bd); padding:10px 14px; background:var(--card); color:var(--ink);
+      display:flex; gap:8px; align-items:center; cursor:pointer;
+      transition:transform .18s var(--ease), box-shadow .18s var(--ease); }
+    .chip:hover{ transform:translate(-2px,-2px) rotate(-1deg); box-shadow:var(--sh); background:var(--saffron); color:var(--midnight); }
     .chip:active{ transform:translate(1px,1px); }
-    .chip.c1{ background:var(--yellow); color:#141414; }
-    .chip.c2{ background:var(--red); color:#141414; }
-    .chip.c3{ background:var(--blue); color:#fff; }
 
-    .examples{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:16px; }
-    .examples .lbl{ font:500 .72rem/1 var(--mono); text-transform:uppercase;
-      letter-spacing:.08em; color:var(--muted); }
-    .ex{ font:500 .82rem system-ui; border:2px solid var(--ink); border-radius:var(--r);
-      padding:6px 11px; background:var(--card); color:var(--ink); cursor:pointer; }
-    .ex:hover{ background:var(--yellow); color:#141414; }
-
-    .card{ background:var(--card); border:var(--bd); border-radius:var(--r);
-      box-shadow:var(--sh); padding:18px; }
-    .row{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
-    input[type=text]{ flex:1 1 240px; background:var(--paper); border:var(--bd);
-      border-radius:var(--r); color:var(--ink); padding:13px 14px; font:inherit; }
+    /* ---------- search card ---------- */
+    .card{ background:var(--card); border:var(--bd); box-shadow:var(--sh); padding:24px; }
+    .row{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+    input[type=text]{ flex:1 1 260px; background:var(--paper); border:var(--bd); border-radius:3px;
+      color:var(--ink); padding:15px 16px; font-family:var(--sans); font-weight:500; font-size:15px; }
     input[type=text]:focus{ outline:none; box-shadow:var(--sh); }
+    input::placeholder{ color:var(--walnut); }
 
-    button{ border:var(--bd); border-radius:var(--r); background:var(--card); color:var(--ink);
-      font:600 .95rem system-ui; padding:12px 16px; cursor:pointer; box-shadow:var(--sh);
-      transition:transform .08s ease, box-shadow .08s ease; display:inline-flex; gap:8px; align-items:center; }
-    button:hover{ transform:translate(-1px,-1px); box-shadow:7px 7px 0 var(--ink); }
+    button{ border:var(--bd); border-radius:3px; background:var(--paper); color:var(--ink);
+      font-family:var(--sans); font-weight:700; font-size:12px; text-transform:uppercase;
+      letter-spacing:.08em; padding:14px 18px; cursor:pointer; box-shadow:var(--sh);
+      display:inline-flex; gap:8px; align-items:center;
+      transition:transform .15s var(--ease), box-shadow .15s var(--ease), background .15s; }
+    button:hover{ transform:translate(-2px,-2px); box-shadow:7px 7px 0 var(--ink); }
     button:active{ transform:translate(2px,2px); box-shadow:2px 2px 0 var(--ink); }
-    button:disabled{ opacity:.45; cursor:not-allowed; box-shadow:var(--sh); transform:none; }
-    button.yellow{ background:var(--yellow); color:#141414; }
-    button.red{ background:var(--red); color:#141414; }
-    button.blue{ background:var(--blue); color:#fff; }
-    button.rec{ background:var(--red); color:#141414; }
+    button:disabled{ opacity:.4; cursor:not-allowed; box-shadow:var(--sh); transform:none; }
+    button.accent{ background:var(--saffron); color:var(--midnight); }
+    button.rec.on{ animation:pulse 1s var(--ease) infinite; }
 
-    #drop{ margin-top:14px; border:3px dashed var(--ink); border-radius:var(--r);
-      padding:24px; text-align:center; color:var(--muted); cursor:pointer; background:var(--paper); }
-    #drop.hot{ border-style:solid; background:var(--yellow); color:#141414; box-shadow:var(--sh); }
-    #drop b{ color:var(--ink); }
-    .hint{ font-size:.82rem; margin-top:6px; }
+    #drop{ margin-top:16px; border:2.5px dashed var(--ink); padding:26px; text-align:center;
+      color:var(--muted); cursor:pointer; background:var(--paper);
+      transition:transform .15s var(--ease), box-shadow .15s var(--ease); }
+    #drop:hover{ transform:translate(-2px,-2px); box-shadow:var(--sh); }
+    #drop.hot{ border-style:solid; background:var(--saffron); color:var(--midnight); box-shadow:var(--sh); }
+    #drop b{ color:var(--ink); font-weight:700; }
+    #drop.hot b{ color:var(--midnight); }
+    .hint{ font-size:12.5px; margin-top:7px; }
 
-    #status{ margin-top:14px; font:500 .9rem var(--mono); color:var(--muted); min-height:20px; }
+    .examples{ display:flex; gap:9px; flex-wrap:wrap; align-items:center; margin-top:18px; }
+    .examples .lbl{ font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); }
+    .ex{ font-family:var(--serif); font-weight:500; font-size:1.05rem; border:var(--hair);
+      padding:5px 13px; background:transparent; color:var(--ink); cursor:pointer;
+      transition:background .15s, color .15s, transform .15s var(--ease); }
+    .ex:hover{ background:var(--saffron); color:var(--midnight); transform:translateY(-2px); border-color:var(--onyx); }
 
-    .results{ margin-top:26px; display:flex; flex-direction:column; gap:14px; }
-    .rolehdr{ font:700 .8rem system-ui; text-transform:uppercase; letter-spacing:.1em;
-      display:inline-block; padding:6px 12px; border:var(--bd); border-radius:var(--r);
-      box-shadow:var(--sh); margin-top:8px; }
-    .rolehdr.drums{ background:var(--yellow); color:#141414; }
-    .rolehdr.bass{ background:var(--blue); color:#fff; }
-    .rolehdr.texture{ background:var(--red); color:#141414; }
+    #status{ margin-top:16px; font-size:13px; font-weight:500; color:var(--espresso); min-height:20px; }
+    @media (prefers-color-scheme:dark){ #status{ color:var(--stone); } }
 
-    .result{ background:var(--card); border:var(--bd); border-radius:var(--r);
-      box-shadow:var(--sh); padding:14px; display:grid; gap:10px;
-      grid-template-columns:64px 1fr auto; align-items:center; }
+    /* ---------- results ---------- */
+    .results{ margin-top:34px; display:flex; flex-direction:column; gap:16px; }
+    .rolehdr{ font-family:var(--serif); font-weight:300; font-size:2.4rem; text-transform:uppercase;
+      letter-spacing:-.03em; line-height:.9; margin-top:14px; padding-bottom:8px; border-bottom:var(--hair); }
+    .rolehdr::first-letter{ color:var(--saffron); }
+
+    .result{ background:var(--card); border:var(--bd); padding:16px; display:grid;
+      grid-template-columns:74px 1fr auto; gap:14px; align-items:center;
+      animation:rise .5s var(--ease) both; animation-delay:calc(var(--i,0)*70ms);
+      transition:transform .15s var(--ease), box-shadow .15s var(--ease); }
+    .result:hover{ transform:translate(-3px,-3px); box-shadow:var(--sh); }
     .match{ text-align:center; }
-    .match .pct{ font:800 1.05rem var(--mono); }
-    .match .bar{ height:6px; margin-top:5px; border:2px solid var(--ink); border-radius:3px; overflow:hidden; background:var(--paper); }
-    .match .bar i{ display:block; height:100%; background:var(--green); }
+    .match .pct{ font-family:var(--serif); font-weight:500; font-size:1.7rem; line-height:1; color:var(--saffron); }
+    .match .bar{ height:6px; margin-top:6px; border:2px solid var(--ink); overflow:hidden; background:var(--paper); }
+    .match .bar i{ display:block; height:100%; background:var(--saffron); width:0; transition:width .6s var(--ease) .1s; }
     .meta{ min-width:0; }
-    .meta .t{ font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .meta .sub{ font:500 .76rem var(--mono); color:var(--muted); margin-top:2px; }
-    .meta audio{ width:100%; height:34px; margin-top:8px; }
+    .meta .t{ font-family:var(--serif); font-weight:500; font-size:1.5rem; line-height:1.05;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .meta .sub{ font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-top:3px; }
+    .meta audio{ width:100%; height:32px; margin-top:9px; filter:grayscale(.3); }
     .fb{ display:flex; flex-direction:column; gap:8px; }
-    .fb button{ padding:8px 12px; box-shadow:3px 3px 0 var(--ink); font-size:.82rem; }
-    .result.saved{ background:color-mix(in srgb, var(--yellow) 22%, var(--card)); }
-    .result.skipped{ opacity:.4; }
+    .fb button{ padding:9px 12px; box-shadow:3px 3px 0 var(--ink); }
+    .result.saved{ background:color-mix(in srgb, var(--saffron) 25%, var(--card)); }
+    .result.skipped{ opacity:.38; }
 
-    .dash{ margin-top:34px; }
-    .dash .card{ display:flex; gap:22px; flex-wrap:wrap; align-items:center; font:500 .85rem var(--mono); }
-    .dash b{ font-weight:800; }
-    .dash .lbl{ text-transform:uppercase; letter-spacing:.08em; font-size:.72rem; color:var(--muted); }
-    svg{ width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
-    a{ color:var(--blue); font-weight:600; }
+    /* ---------- latency ---------- */
+    .dash{ margin-top:40px; }
+    .dash .card{ display:flex; gap:26px; flex-wrap:wrap; align-items:baseline; }
+    .dash .lbl{ font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); }
+    .dash b{ font-family:var(--serif); font-weight:500; font-size:1.5rem; color:var(--saffron); }
+
+    svg.i{ width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+    a{ color:var(--saffron); font-weight:700; }
+
+    /* ---------- keyframes ---------- */
+    @keyframes spin{ to{ transform:rotate(360deg); } }
+    @keyframes scroll{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+    @keyframes rise{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:none; } }
+    @keyframes pulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.05); box-shadow:7px 7px 0 var(--ink); } }
+    @media (prefers-reduced-motion:reduce){ *{ animation:none!important; transition:none!important; } }
+
+    @media (max-width:640px){
+      .hero{ grid-template-columns:1fr; } .vinyl{ display:none; }
+      .result{ grid-template-columns:60px 1fr; } .fb{ grid-column:1/-1; flex-direction:row; }
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <header>
-      <div class="mark">CRATE</div>
-      <p>Sound-native search. Hum it, drop a track, or describe it — search the sound, not words.</p>
-    </header>
+    <div class="hero">
+      <div>
+        <h1 class="brand">Cr<span class="u">a</span>te</h1>
+        <p class="tagline">Search the sound, not the word. Hum it, drop a track, or describe it.</p>
+      </div>
+      <svg class="vinyl" viewBox="0 0 200 200" aria-hidden="true">
+        <circle cx="100" cy="100" r="98" fill="#2c2c2c"/>
+        <g class="grooves">
+          <circle cx="100" cy="100" r="86"/><circle cx="100" cy="100" r="74"/>
+          <circle cx="100" cy="100" r="62"/><circle cx="100" cy="100" r="50"/>
+        </g>
+        <circle cx="100" cy="100" r="34" fill="#d49653"/>
+        <circle cx="100" cy="100" r="7" fill="#2c2c2c"/>
+        <circle cx="100" cy="100" r="2.5" fill="#d8cbb8"/>
+      </svg>
+    </div>
 
+    <div class="marquee" aria-hidden="true">
+      <div class="track">
+        <span>Boom-bap</span><span class="dot">✦</span><span>Reese bass</span><span class="dot">✦</span><span>Tape-saturated</span><span class="dot">✦</span><span>Rimshot</span><span class="dot">✦</span><span>Vinyl crackle</span><span class="dot">✦</span><span>Jazzy rhodes</span><span class="dot">✦</span><span>808 kick</span><span class="dot">✦</span><span>Dusty break</span><span class="dot">✦</span><span>Boom-bap</span><span class="dot">✦</span><span>Reese bass</span><span class="dot">✦</span><span>Tape-saturated</span><span class="dot">✦</span><span>Rimshot</span><span class="dot">✦</span><span>Vinyl crackle</span><span class="dot">✦</span><span>Jazzy rhodes</span><span class="dot">✦</span><span>808 kick</span><span class="dot">✦</span><span>Dusty break</span><span class="dot">✦</span>
+      </div>
+    </div>
+
+    <p class="eyebrow">Three ways in — one embedding space</p>
     <div class="chips">
-      <span class="chip c1" id="chip-hum"><svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><path d="M12 18v4"/></svg>Hum</span>
-      <span class="chip c2" id="chip-drop"><svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Drop a track</span>
-      <span class="chip c3" id="chip-desc"><svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M4 12h10"/><path d="M4 17h7"/></svg>Describe</span>
+      <span class="chip" id="chip-hum"><svg class="i" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><path d="M12 18v4"/></svg>Hum it</span>
+      <span class="chip" id="chip-drop"><svg class="i" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Drop a track</span>
+      <span class="chip" id="chip-desc"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M4 12h10"/><path d="M4 17h7"/></svg>Describe</span>
     </div>
 
     <div class="card">
       <div class="row">
         <input id="q" type="text" placeholder="dusty boom-bap break but darker" />
-        <button class="yellow" id="go">
-          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>Search</button>
+        <button class="accent" id="go">
+          <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>Search</button>
         <button class="rec" id="mic">
-          <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/></svg>
+          <svg class="i" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/></svg>
           <span>Rec hum</span></button>
       </div>
 
       <div id="drop">
         <b>Click to upload</b> or drop a sample / reference track
-        <div class="hint">A file searches by sound. To split it into drums · bass · texture, hit <b>Build crate</b>.</div>
+        <div class="hint">A file searches by sound. Split it into drums · bass · texture with <b>Build crate</b>.</div>
       </div>
       <input id="file" type="file" accept="audio/*" hidden />
 
-      <div class="row" style="margin-top:14px">
-        <button class="blue" id="buildCrate" disabled>
-          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <div class="row" style="margin-top:16px">
+        <button id="buildCrate" disabled>
+          <svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
           Build crate from dropped track</button>
       </div>
 
@@ -153,10 +226,10 @@
 
     <div class="dash" id="dash" hidden>
       <div class="card">
-        <span class="lbl">quantized encoder latency</span>
-        <span>base <b id="lat-base">—</b> ms</span>
-        <span>int8 <b id="lat-int8">—</b> ms</span>
-        <span>speedup <b id="lat-speed">—</b>×</span>
+        <span class="lbl">Quantized encoder latency</span>
+        <span class="lbl">base <b id="lat-base">—</b> ms</span>
+        <span class="lbl">int8 <b id="lat-int8">—</b> ms</span>
+        <span class="lbl">speedup <b id="lat-speed">—</b>×</span>
       </div>
     </div>
   </div>

@@ -3,9 +3,10 @@ const $ = (id) => document.getElementById(id);
 let sessionId = null;
 let pickedFile = null;
 
-const HEART = '<svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg>';
-const CROSS = '<svg viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
+const HEART = '<svg class="i" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg>';
+const CROSS = '<svg class="i" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
 
+const busy = (on) => document.body.classList.toggle("busy", on);
 function setStatus(m) { $("status").textContent = m || ""; }
 
 async function post(url, form) {
@@ -34,16 +35,23 @@ function render(data) {
       box.appendChild(h);
       appendResults(box, data.kit[role]);
     }
-    return;
+  } else {
+    setStatus(`${data.modality} query · ${data.results.length} matches`);
+    appendResults(box, data.results);
   }
-  setStatus(`${data.modality} query · ${data.results.length} matches`);
-  appendResults(box, data.results);
+  // animate match bars from 0 once laid out
+  requestAnimationFrame(() =>
+    box.querySelectorAll(".bar i").forEach((i) => { i.style.width = i.dataset.w + "%"; }));
 }
 
 function appendResults(box, results) {
   if (!results.length) return;
   const max = Math.max(...results.map((r) => r.final ?? r.score ?? 0), 1e-6);
-  results.forEach((r) => box.appendChild(resultRow(r, max)));
+  results.forEach((r, idx) => {
+    const el = resultRow(r, max);
+    el.style.setProperty("--i", idx);
+    box.appendChild(el);
+  });
 }
 
 function resultRow(r, max) {
@@ -54,7 +62,7 @@ function resultRow(r, max) {
   el.innerHTML = `
     <div class="match">
       <div class="pct">${pct}%</div>
-      <div class="bar"><i style="width:${pct}%"></i></div>
+      <div class="bar"><i data-w="${pct}"></i></div>
     </div>
     <div class="meta">
       <div class="t">${escapeHtml(r.text || r.id)}</div>
@@ -63,7 +71,7 @@ function resultRow(r, max) {
     </div>
     <div class="fb"></div>`;
   const fb = el.querySelector(".fb");
-  fb.appendChild(mkBtn("yellow", HEART + "Save", () => feedback("/save", r.id, el, "saved")));
+  fb.appendChild(mkBtn("accent", HEART + "Save", () => feedback("/save", r.id, el, "saved")));
   fb.appendChild(mkBtn("", CROSS + "Skip", () => feedback("/skip", r.id, el, "skipped")));
   return el;
 }
@@ -87,20 +95,29 @@ async function feedback(url, id, el, klass) {
   await post(url, f);
 }
 
-async function searchText() {
+async function run(fn) {
+  busy(true);
+  try { await fn(); } finally { busy(false); }
+}
+
+function searchText() {
   const q = $("q").value.trim();
   if (!q) return;
   setStatus("searching…");
-  const f = new FormData();
-  f.append("text", q);
-  render(await post("/search", f));
+  return run(async () => {
+    const f = new FormData();
+    f.append("text", q);
+    render(await post("/search", f));
+  });
 }
 
-async function sendAudio(file, endpoint = "/search") {
+function sendAudio(file, endpoint = "/search") {
   setStatus(endpoint === "/crate" ? "splitting into stems (Demucs)…" : "analyzing audio…");
-  const f = new FormData();
-  f.append("audio", file, file.name || "clip.webm");
-  render(await post(endpoint, f));
+  return run(async () => {
+    const f = new FormData();
+    f.append("audio", file, file.name || "clip.webm");
+    render(await post(endpoint, f));
+  });
 }
 
 function usePickedFile(file) {
@@ -132,6 +149,7 @@ $("buildCrate").onclick = () => pickedFile && sendAudio(pickedFile, "/crate");
 // --- mic hum ---
 let recorder, chunks = [];
 $("mic").onclick = async () => {
+  const btn = $("mic");
   if (recorder && recorder.state === "recording") { recorder.stop(); return; }
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -141,10 +159,12 @@ $("mic").onclick = async () => {
     recorder.onstop = () => {
       stream.getTracks().forEach((t) => t.stop());
       sendAudio(new File(chunks, "hum.webm", { type: chunks[0]?.type || "audio/webm" }));
-      $("mic").querySelector("span").textContent = "Rec hum";
+      btn.classList.remove("on");
+      btn.querySelector("span").textContent = "Rec hum";
     };
     recorder.start();
-    $("mic").querySelector("span").textContent = "Stop";
+    btn.classList.add("on");
+    btn.querySelector("span").textContent = "Stop";
     setStatus("recording — hum the sound, then Stop");
   } catch (e) { setStatus("mic blocked: " + e.message); }
 };
@@ -162,7 +182,7 @@ document.querySelectorAll("#examples .ex").forEach((el) => {
 // --- first visit: run one example so the page isn't empty (and warms the model) ---
 window.addEventListener("load", () => {
   $("q").value = "boom-bap break";
-  searchText().catch(() => setStatus("")); // index not ready yet → stay quiet
+  Promise.resolve(searchText()).catch(() => setStatus(""));
 });
 
 // --- latency dashboard (only shown when real numbers exist) ---
