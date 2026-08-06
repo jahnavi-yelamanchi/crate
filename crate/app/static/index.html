@@ -5,73 +5,140 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Crate — sound-native search</title>
   <style>
-    :root { --bg:#0d0d10; --panel:#16161c; --line:#2a2a33; --ink:#e8e8ea; --dim:#8a8a95; --acc:#e5b25d; }
-    * { box-sizing:border-box; }
-    body { margin:0; background:var(--bg); color:var(--ink);
-      font:15px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; }
-    header { padding:28px 20px 8px; text-align:center; }
-    header h1 { margin:0; font-size:30px; letter-spacing:-0.5px; }
-    header h1 span { color:var(--acc); }
-    header p { margin:6px 0 0; color:var(--dim); }
-    main { max-width:760px; margin:0 auto; padding:16px 20px 80px; }
-    .box { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; }
-    .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-    input[type=text] { flex:1 1 260px; background:#0f0f14; border:1px solid var(--line);
-      color:var(--ink); border-radius:8px; padding:11px 13px; font:inherit; }
-    button { background:#20202a; color:var(--ink); border:1px solid var(--line);
-      border-radius:8px; padding:10px 14px; font:inherit; cursor:pointer; }
-    button:hover { border-color:var(--acc); }
-    button.primary { background:var(--acc); color:#161006; border-color:var(--acc); font-weight:600; }
-    button.rec { color:#ff6b6b; }
-    #drop { margin-top:12px; border:1.5px dashed var(--line); border-radius:10px; padding:22px;
-      text-align:center; color:var(--dim); transition:.15s; }
-    #drop.hot { border-color:var(--acc); color:var(--ink); background:#14140f; }
-    .hint { color:var(--dim); font-size:13px; margin:4px 2px 0; }
-    .results { margin-top:20px; display:flex; flex-direction:column; gap:8px; }
-    .result { display:flex; align-items:center; gap:12px; background:var(--panel);
-      border:1px solid var(--line); border-radius:10px; padding:10px 12px; }
-    .result .meta { flex:1; min-width:0; }
-    .result .t { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .result .sub { color:var(--dim); font-size:12px; }
-    .score { color:var(--acc); font-variant-numeric:tabular-nums; }
-    .kit-role { margin-top:18px; color:var(--acc); text-transform:uppercase; font-size:12px; letter-spacing:1px; }
-    .iconbtn { padding:6px 9px; }
-    #status { color:var(--dim); min-height:20px; margin-top:10px; }
-    .dash { display:flex; gap:16px; margin-top:26px; color:var(--dim); font-size:13px; flex-wrap:wrap; }
-    .dash b { color:var(--ink); }
-    a { color:var(--acc); }
+    :root {
+      --yellow:#FFEB3B; --red:#FF5252; --blue:#2196F3; --green:#00C853;
+      --ink:#141414; --paper:#FAFAF7; --card:#FFFFFF; --muted:#5c5c5c;
+      --bd:3px solid var(--ink); --sh:5px 5px 0 var(--ink); --r:8px;
+      --mono:ui-monospace,"JetBrains Mono",Menlo,monospace;
+    }
+    @media (prefers-color-scheme:dark){
+      :root{ --ink:#f2f2f2; --paper:#0e0e0e; --card:#1a1a1a; --muted:#a0a0a0;
+             --sh:5px 5px 0 #000; }
+    }
+    *{ box-sizing:border-box; }
+    body{ margin:0; background:var(--paper); color:var(--ink);
+      font:400 16px/1.55 system-ui,-apple-system,sans-serif; }
+    .wrap{ max-width:920px; margin:0 auto; padding:28px 20px 80px; }
+
+    header .mark{ display:inline-block; font-size:clamp(2.4rem,7vw,3.6rem); font-weight:800;
+      letter-spacing:-1px; line-height:1; background:var(--yellow); color:#141414;
+      border:var(--bd); box-shadow:var(--sh); border-radius:var(--r); padding:6px 16px; }
+    header p{ margin:16px 2px 0; color:var(--muted); font-size:1.05rem; }
+
+    .chips{ display:flex; gap:10px; flex-wrap:wrap; margin:20px 0 22px; }
+    .chip{ font:500 .78rem/1 system-ui; text-transform:uppercase; letter-spacing:.06em;
+      border:var(--bd); border-radius:var(--r); padding:8px 11px; background:var(--card);
+      display:flex; gap:7px; align-items:center; }
+    .chip.c1{ background:var(--yellow); color:#141414; }
+    .chip.c2{ background:var(--red); color:#141414; }
+    .chip.c3{ background:var(--blue); color:#fff; }
+
+    .card{ background:var(--card); border:var(--bd); border-radius:var(--r);
+      box-shadow:var(--sh); padding:18px; }
+    .row{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+    input[type=text]{ flex:1 1 240px; background:var(--paper); border:var(--bd);
+      border-radius:var(--r); color:var(--ink); padding:13px 14px; font:inherit; }
+    input[type=text]:focus{ outline:none; box-shadow:var(--sh); }
+
+    button{ border:var(--bd); border-radius:var(--r); background:var(--card); color:var(--ink);
+      font:600 .95rem system-ui; padding:12px 16px; cursor:pointer; box-shadow:var(--sh);
+      transition:transform .08s ease, box-shadow .08s ease; display:inline-flex; gap:8px; align-items:center; }
+    button:hover{ transform:translate(-1px,-1px); box-shadow:7px 7px 0 var(--ink); }
+    button:active{ transform:translate(2px,2px); box-shadow:2px 2px 0 var(--ink); }
+    button:disabled{ opacity:.45; cursor:not-allowed; box-shadow:var(--sh); transform:none; }
+    button.yellow{ background:var(--yellow); color:#141414; }
+    button.red{ background:var(--red); color:#141414; }
+    button.blue{ background:var(--blue); color:#fff; }
+    button.rec{ background:var(--red); color:#141414; }
+
+    #drop{ margin-top:14px; border:3px dashed var(--ink); border-radius:var(--r);
+      padding:24px; text-align:center; color:var(--muted); cursor:pointer; background:var(--paper); }
+    #drop.hot{ border-style:solid; background:var(--yellow); color:#141414; box-shadow:var(--sh); }
+    #drop b{ color:var(--ink); }
+    .hint{ font-size:.82rem; margin-top:6px; }
+
+    #status{ margin-top:14px; font:500 .9rem var(--mono); color:var(--muted); min-height:20px; }
+
+    .results{ margin-top:26px; display:flex; flex-direction:column; gap:14px; }
+    .rolehdr{ font:700 .8rem system-ui; text-transform:uppercase; letter-spacing:.1em;
+      display:inline-block; padding:6px 12px; border:var(--bd); border-radius:var(--r);
+      box-shadow:var(--sh); margin-top:8px; }
+    .rolehdr.drums{ background:var(--yellow); color:#141414; }
+    .rolehdr.bass{ background:var(--blue); color:#fff; }
+    .rolehdr.texture{ background:var(--red); color:#141414; }
+
+    .result{ background:var(--card); border:var(--bd); border-radius:var(--r);
+      box-shadow:var(--sh); padding:14px; display:grid; gap:10px;
+      grid-template-columns:64px 1fr auto; align-items:center; }
+    .match{ text-align:center; }
+    .match .pct{ font:800 1.05rem var(--mono); }
+    .match .bar{ height:6px; margin-top:5px; border:2px solid var(--ink); border-radius:3px; overflow:hidden; background:var(--paper); }
+    .match .bar i{ display:block; height:100%; background:var(--green); }
+    .meta{ min-width:0; }
+    .meta .t{ font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .meta .sub{ font:500 .76rem var(--mono); color:var(--muted); margin-top:2px; }
+    .meta audio{ width:100%; height:34px; margin-top:8px; }
+    .fb{ display:flex; flex-direction:column; gap:8px; }
+    .fb button{ padding:8px 12px; box-shadow:3px 3px 0 var(--ink); font-size:.82rem; }
+    .result.saved{ background:color-mix(in srgb, var(--yellow) 22%, var(--card)); }
+    .result.skipped{ opacity:.4; }
+
+    .dash{ margin-top:34px; }
+    .dash .card{ display:flex; gap:22px; flex-wrap:wrap; align-items:center; font:500 .85rem var(--mono); }
+    .dash b{ font-weight:800; }
+    .dash .lbl{ text-transform:uppercase; letter-spacing:.08em; font-size:.72rem; color:var(--muted); }
+    svg{ width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+    a{ color:var(--blue); font-weight:600; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>🎚️ <span>Crate</span></h1>
-    <p>hum it · drop a track · describe it — search sound, not words</p>
-  </header>
-  <main>
-    <div class="box">
+  <div class="wrap">
+    <header>
+      <div class="mark">CRATE</div>
+      <p>Sound-native search. Hum it, drop a track, or describe it — search the sound, not words.</p>
+    </header>
+
+    <div class="chips">
+      <span class="chip c1"><svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><path d="M12 18v4"/></svg>Hum</span>
+      <span class="chip c2"><svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Drop a track</span>
+      <span class="chip c3"><svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M4 12h10"/><path d="M4 17h7"/></svg>Describe</span>
+    </div>
+
+    <div class="card">
       <div class="row">
         <input id="q" type="text" placeholder="dusty boom-bap break but darker" />
-        <button class="primary" id="go">Search</button>
-        <button id="mic">● Rec hum</button>
+        <button class="yellow" id="go">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>Search</button>
+        <button class="rec" id="mic">
+          <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/></svg>
+          <span>Rec hum</span></button>
       </div>
-      <div id="drop">drop a sample or reference track here
-        <div class="hint">audio file → search by sound, or “Build a crate” to split into stems</div>
+
+      <div id="drop">
+        <b>Click to upload</b> or drop a sample / reference track
+        <div class="hint">A file searches by sound. To split it into drums · bass · texture, hit <b>Build crate</b>.</div>
       </div>
-      <div class="row" style="margin-top:12px">
-        <button id="buildCrate" disabled>Build a crate from dropped track</button>
+      <input id="file" type="file" accept="audio/*" hidden />
+
+      <div class="row" style="margin-top:14px">
+        <button class="blue" id="buildCrate" disabled>
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Build crate from dropped track</button>
       </div>
       <div id="status"></div>
     </div>
 
     <div class="results" id="results"></div>
 
-    <div class="dash" id="dash">
-      <span>encoder latency —</span>
-      <span>base: <b id="lat-base">—</b> ms</span>
-      <span>int8: <b id="lat-int8">—</b> ms</span>
-      <span>speedup: <b id="lat-speed">—</b>×</span>
+    <div class="dash" id="dash" hidden>
+      <div class="card">
+        <span class="lbl">quantized encoder latency</span>
+        <span>base <b id="lat-base">—</b> ms</span>
+        <span>int8 <b id="lat-int8">—</b> ms</span>
+        <span>speedup <b id="lat-speed">—</b>×</span>
+      </div>
     </div>
-  </main>
+  </div>
   <script src="/static/app.js"></script>
 </body>
 </html>
