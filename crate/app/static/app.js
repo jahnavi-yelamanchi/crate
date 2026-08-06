@@ -179,12 +179,6 @@ document.querySelectorAll("#examples .ex").forEach((el) => {
   el.onclick = () => { $("q").value = el.textContent; searchText(); };
 });
 
-// --- first visit: run one example so the page isn't empty (and warms the model) ---
-window.addEventListener("load", () => {
-  $("q").value = "boom-bap break";
-  Promise.resolve(searchText()).catch(() => setStatus(""));
-});
-
 // --- animated sound-wave background ---
 (function buildWave() {
   const el = $("wavebg");
