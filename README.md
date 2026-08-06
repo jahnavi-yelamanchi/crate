@@ -52,7 +52,14 @@ python crate/index/build_index.py
 uvicorn crate.app.main:app --reload   # open http://localhost:8000
 ```
 
-**Deploy your own live demo** (Docker Space, one command, no clicking):
+**Live demo, free** — run the app anywhere the index is built and get a public URL
+(cloudflared quick tunnel, no account):
+
+```bash
+python scripts/serve_colab.py     # prints https://<...>.trycloudflare.com
+```
+
+**Or an always-on HF Space** (needs HF Pro — HF now gates Docker Spaces on paid CPU):
 
 ```bash
 export HF_TOKEN=...   # write token
