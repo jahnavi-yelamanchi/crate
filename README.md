@@ -52,6 +52,13 @@ python crate/index/build_index.py
 uvicorn crate.app.main:app --reload   # open http://localhost:8000
 ```
 
+**Deploy your own live demo** (Docker Space, one command, no clicking):
+
+```bash
+export HF_TOKEN=...   # write token
+python scripts/deploy_space.py my-user/crate my-user/crate-clap-lora my-user/crate-index
+```
+
 ## Eval
 
 ```bash

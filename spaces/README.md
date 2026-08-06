@@ -29,15 +29,14 @@ track, or describe a sound, and search a sample library in one embedding space.
 | `CRATE_ARTIFACTS_REPO` | `jahnavi-yelamanchi/crate-index` | dataset repo with the 3 artifact files |
 | `HF_TOKEN` | *(secret)* | only if the artifact/model repos are private |
 
-## Deploy
+## Deploy — one command
 
 ```bash
-# from repo root, with the HF CLI logged in
-hf repo create crate --repo-type space --space_sdk docker
-git clone https://huggingface.co/spaces/<you>/crate hf-space && cd hf-space
-cp -r ../spaces/* .            # this folder + the crate/ package + pyproject
-git add . && git commit -m "deploy crate" && git push
+export HF_TOKEN=...   # a write token: https://huggingface.co/settings/tokens
+python scripts/deploy_space.py [space-id] [model-repo] [index-repo]
+# defaults: jahnaviym/crate  jahnaviym/crate-clap-lora  jahnaviym/crate-index
 ```
 
-The Dockerfile installs the package straight from GitHub, so the Space only needs
-these files plus the two repo variables above.
+Creates the Space, uploads these three files, and sets the two variables above —
+no clicking. Re-run any time to update. The Dockerfile installs the `crate` package
+straight from GitHub, so the Space needs nothing else.
