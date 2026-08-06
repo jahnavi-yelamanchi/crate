@@ -27,7 +27,7 @@ function render(data) {
   const box = $("results");
   box.innerHTML = "";
   if (data.kit) {
-    setStatus("crate assembled — matched samples per stem");
+    setStatus("crate assembled. matched samples per stem");
     for (const role of Object.keys(data.kit)) {
       const h = document.createElement("div");
       h.className = "rolehdr " + role;
@@ -90,8 +90,8 @@ async function feedback(url, id, el, klass) {
   el.classList.remove("saved", "skipped");
   el.classList.add(klass);
   setStatus(url.endsWith("save")
-    ? "saved — trains your taste; future searches rank things you like higher"
-    : "skipped — the taste ranker learns to push results like this down");
+    ? "saved. trains your taste; future searches rank things you like higher"
+    : "skipped. the taste ranker learns to push results like this down");
   await post(url, f);
 }
 
@@ -165,7 +165,7 @@ $("mic").onclick = async () => {
     recorder.start();
     btn.classList.add("on");
     btn.querySelector("span").textContent = "Stop";
-    setStatus("recording — hum the sound, then Stop");
+    setStatus("recording. hum the sound, then press Stop");
   } catch (e) { setStatus("mic blocked: " + e.message); }
 };
 
