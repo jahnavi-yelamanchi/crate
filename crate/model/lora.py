@@ -83,7 +83,7 @@ def train(
         for wavs, texts in _batches(train_rows, batch_size, rng):
             if augment_prob:  # augmented audio must still match its text
                 wavs = [aug(w, rng) if rng.random() < augment_prob else w for w in wavs]
-            audio_in = processor(audios=wavs, sampling_rate=config.SAMPLE_RATE,
+            audio_in = processor(audio=wavs, sampling_rate=config.SAMPLE_RATE,
                                  return_tensors="pt").to(device)
             text_in = processor(text=texts, return_tensors="pt", padding=True).to(device)
 

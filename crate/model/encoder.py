@@ -42,7 +42,7 @@ class ClapEncoder:
         import torch
 
         batch = [wav] if isinstance(wav, np.ndarray) else wav
-        inputs = self.processor(audios=batch, sampling_rate=config.SAMPLE_RATE,
+        inputs = self.processor(audio=batch, sampling_rate=config.SAMPLE_RATE,
                                 return_tensors="pt").to(self.device)
         with torch.no_grad():
             feats = self.model.get_audio_features(**inputs)

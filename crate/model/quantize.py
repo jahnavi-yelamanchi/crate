@@ -27,7 +27,7 @@ def export_and_quantize(adapter: str | None = None) -> str:
     enc = ClapEncoder(adapter=adapter, device="cpu")
     processor = enc.processor
     dummy = np.zeros(config.CLIP_SAMPLES, dtype=np.float32)
-    feats = processor(audios=[dummy], sampling_rate=config.SAMPLE_RATE, return_tensors="pt")
+    feats = processor(audio=[dummy], sampling_rate=config.SAMPLE_RATE, return_tensors="pt")
     input_features = feats["input_features"]
 
     class AudioTower(torch.nn.Module):
@@ -61,7 +61,7 @@ def benchmark(n: int = 50, adapter: str | None = None) -> dict:
     enc = ClapEncoder(adapter=adapter, device="cpu")
     processor = enc.processor
     clip = np.random.randn(config.CLIP_SAMPLES).astype(np.float32)
-    feats = processor(audios=[clip], sampling_rate=config.SAMPLE_RATE, return_tensors="pt")
+    feats = processor(audio=[clip], sampling_rate=config.SAMPLE_RATE, return_tensors="pt")
     onnx_in = {"input_features": feats["input_features"].numpy()}
 
     base_ms = _median_ms(lambda: enc.embed_audio(clip), n)
