@@ -6,6 +6,8 @@
 
 **Live model:** [huggingface.co/jahnaviym/crate-clap-lora](https://huggingface.co/jahnaviym/crate-clap-lora) · **Code:** this repo
 
+![Crate — sound-native search UI](docs/hero.png)
+
 ---
 
 ## Value proposition
